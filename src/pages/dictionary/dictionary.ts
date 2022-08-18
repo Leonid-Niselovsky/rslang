@@ -1,7 +1,26 @@
 import ApiWords from "../../api/apiWords"
 import { Words } from "./words"
 
+enum accordance {
+  A1 = 0,
+  A2 = 1,
+  B1 = 2,
+  B2 = 3,
+  C1 = 4,
+  C2 = 5,
+}
+
 export class DifficultyLevels {
+
+  private _currentLevel: string
+
+  get currentLevel(): string{
+    return this._currentLevel
+  }
+
+  set currentLevel(level: string){
+    this._currentLevel = level
+  }
 
   private numberOfPages: number = 30
   private levels: NodeListOf<Element>
@@ -20,9 +39,11 @@ export class DifficultyLevels {
       el.addEventListener('click', async () => {
         const level = el.classList[1].split('level-')[1]
         if(!this.words.checkLevel(level)){
-          this.words.push(level, await this.getWordsChunk(2))
+          this.words.push(level, await this.getWordsChunk(accordance[level]))
         }
-        console.log(this.words.log())
+        this.words.log()
+        this.currentLevel = level
+        this.words.render(this.currentLevel)
       })
     })
   }

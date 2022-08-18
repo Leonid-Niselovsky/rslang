@@ -1,3 +1,7 @@
+import {Words as IWord} from './../../api/interface'
+import { Word } from './word'
+
+
 interface IWords {
   'A1': IWord[],
   'A2': IWord[],
@@ -7,30 +11,23 @@ interface IWords {
   'C2': IWord[],
 }
 
-interface IWord {
-  "id": string,
-  "group": 0,
-  "page": 0,
-  "word": string,
-  "image": string,
-  "audio": string,
-  "audioMeaning": string,
-  "audioExample": string,
-  "textMeaning": string,
-  "textExample": string,
-  "transcription": string,
-  "wordTranslate": string,
-  "textMeaningTranslate": string,
-  "textExampleTranslate": string
-}
-
-
 export class Words {
 
-  private allWords: IWords
+
+
+  private _allWords: IWords
+
+  set allWords(words: IWords){
+    this._allWords = words
+  }
+
+  get allWords(): IWords{
+    return this._allWords
+  }
+
 
   constructor() {
-    this.allWords = {
+    this._allWords = {
       'A1': [],
       'A2': [],
       'B1': [],
@@ -38,6 +35,7 @@ export class Words {
       'C1': [],
       'C2': [],
     }
+
   }
 
   push(level: string, chunk: IWord[]){
@@ -50,7 +48,29 @@ export class Words {
     return true
   }
 
+  getLevelWords(level: string): IWord[]{
+    return this.allWords[level]
+  }
+
   log(){
     console.log(this.allWords)
   }
+
+  render(level: string){
+    
+    const prevContainer: HTMLElement = document.querySelector('.card-wrapper')
+    if(prevContainer) prevContainer.remove()
+
+    const levelWords = this.getLevelWords(level)
+    let html = ""
+    for(let i = 0; i < levelWords.length; i++){
+      const word = new Word(levelWords[i].word, levelWords[i].wordTranslate)
+      html += word.htmlCode
+    }
+    const container = document.createElement('div')
+    container.classList.add('card-wrapper')
+    container.innerHTML = html
+    document.body.append(container)
+  }
+
 }
