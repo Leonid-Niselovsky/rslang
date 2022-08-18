@@ -7,7 +7,11 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-      main: './src/pages/main/main.ts'
+      main: './src/pages/main/main.ts',
+      dictionary: './src/pages/dictionary/dictionary.ts',
+      games: './src/pages/games/games.ts',
+      login: './src/pages/login/login.ts',
+      statistics: './src/pages/statistics/statistics.ts',
         },
   output: {
       filename: '[name].js',
@@ -17,8 +21,29 @@ module.exports = {
   plugins: [
           new HtmlWebpackPlugin({
               filename: 'index.html',
-              template: path.resolve(__dirname, './src/pages/main/main.html')
+              template: path.resolve(__dirname, './src/pages/main/main.html'),
+              chunks: ['main']
           }),
+          new HtmlWebpackPlugin({
+            filename: 'dictionary.html',
+            template: path.resolve(__dirname, './src/pages/dictionary/dictionary.html'),
+            chunks: ['dictionary']
+        }),
+        new HtmlWebpackPlugin({
+          filename: 'games.html',
+          template: path.resolve(__dirname, './src/pages/games/games.html'),
+          chunks: ['games']
+      }),
+      new HtmlWebpackPlugin({
+        filename: 'login.html',
+        template: path.resolve(__dirname, './src/pages/login/login.html'),
+        chunks: ['login']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'statistics.html',
+      template: path.resolve(__dirname, './src/pages/statistics/statistics.html'),
+      chunks: ['statistics']
+  }),
           new CleanWebpackPlugin(),
           new CopyPlugin({
             patterns: [{ from: path.resolve(__dirname, './src/assets'),
