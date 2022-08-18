@@ -1,3 +1,4 @@
+import {Words} from './interface'
 class ApiWords{
     url: string;
     constructor() {
@@ -5,13 +6,13 @@ class ApiWords{
     }
     getChunkOfWords(page, group){
       const Url= `${this.url}?page=${page}&group=${group}`;
-      const ChunkOfWords = fetch(Url)
+      const ChunkOfWords: Promise<Words[]> = fetch(Url)
         .then((data) => data.json());
       return ChunkOfWords;
     }
     getWordById(id){
       const Url= `${this.url}/${id}`;
-      const WordById = fetch(Url)
+      const WordById: Promise<Words> = fetch(Url)
         .then((data) => data.json());
       return WordById;
     }
