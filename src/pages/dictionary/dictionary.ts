@@ -19,7 +19,10 @@ export class DifficultyLevels {
     this.levels.forEach(el => {
       el.addEventListener('click', async () => {
         const level = el.classList[1].split('level-')[1]
-        this.words.push(level, await this.getWordsChunk(2))
+        if(!this.words.checkLevel(level)){
+          this.words.push(level, await this.getWordsChunk(2))
+        }
+        console.log(this.words.log())
       })
     })
   }

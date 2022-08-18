@@ -41,7 +41,16 @@ export class Words {
   }
 
   push(level: string, chunk: IWord[]){
+    if(this.checkLevel(level)) return null
     this.allWords[level] = chunk
+  }
+
+  checkLevel(level: string): boolean{
+    if(!this.allWords[level].length) return false
+    return true
+  }
+
+  log(){
     console.log(this.allWords)
   }
 }
