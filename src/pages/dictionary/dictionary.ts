@@ -3,6 +3,7 @@ import { Words } from "./words"
 
 export class DifficultyLevels {
 
+  private numberOfPages: number = 30
   private levels: NodeListOf<Element>
   private apiWords: ApiWords
   private words: Words
@@ -15,17 +16,23 @@ export class DifficultyLevels {
   }
 
   onClick(){
-    this.levels.forEach(level => {
-      level.addEventListener('click', async (e) => {
-        console.log(await this.getWordsChunk())
+    this.levels.forEach(el => {
+      el.addEventListener('click', async () => {
+        const level = el.classList[1].split('level-')[1]
+        this.words.push(level, await this.getWordsChunk(2))
       })
     })
   }
 
-  async getWordsChunk(){
-    return this.apiWords.getChunkOfWords(0, 0)
+  async getWordsChunk(level: number){
+    const chunk = []
+    for(let i = 0; i < this.numberOfPages; i++){
+      const wordArr = await this.apiWords.getChunkOfWords(i, level)
+      chunk.push(...wordArr)
+    }
+    return chunk
   }
-
+  
 }
 
 const levels = new DifficultyLevels()
