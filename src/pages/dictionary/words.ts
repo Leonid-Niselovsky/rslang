@@ -3,16 +3,26 @@ import { Word } from './word'
 
 
 interface IWords {
-  'A1': IWord[],
-  'A2': IWord[],
-  'B1': IWord[],
-  'B2': IWord[],
-  'C1': IWord[],
-  'C2': IWord[],
+  'A1': Map<number, IWord>,
+  'A2': Map<number, IWord>,
+  'B1': Map<number, IWord>,
+  'B2': Map<number, IWord>,
+  'C1': Map<number, IWord>,
+  'C2': Map<number, IWord>,
 }
+
 
 export class Words {
 
+  private _currentLevel: string
+
+  get currentLevel(): string{
+    return this._currentLevel
+  }
+
+  set currentLevel(level: string){
+    this._currentLevel = level
+  }
 
 
   private _allWords: IWords
@@ -28,45 +38,48 @@ export class Words {
 
   constructor() {
     this._allWords = {
-      'A1': [],
-      'A2': [],
-      'B1': [],
-      'B2': [],
-      'C1': [],
-      'C2': [],
+      'A1': new Map<number, IWord>(),
+      'A2': new Map<number, IWord>(),
+      'B1': new Map<number, IWord>(),
+      'B2': new Map<number, IWord>(),
+      'C1': new Map<number, IWord>(),
+      'C2': new Map<number, IWord>(),
     }
 
   }
 
-  push(level: string, chunk: IWord[]){
+  push(level: string, chunk: Map<number, IWord[]>){
     if(this.checkLevel(level)) return null
     this.allWords[level] = chunk
   }
 
   checkLevel(level: string): boolean{
-    if(!this.allWords[level].length) return false
+    if(!this.allWords[level].size) return false
     return true
   }
 
-  getLevelWords(level: string): IWord[]{
+  getLevelWords(level: string): Map<number, IWord[]>{
     return this.allWords[level]
+  }
+
+  getLevelPage(page: number){
+    return this.getLevelWords(this.currentLevel)[page]
   }
 
   log(){
     console.log(this.allWords)
   }
 
-  render(level: string){
-    
+  render(level: string, page: number){
+
     const prevContainer: HTMLElement = document.querySelector('.card-wrapper')
     if(prevContainer) prevContainer.remove()
 
     const levelWords = this.getLevelWords(level)
     let html = ""
-    for(let i = 0; i < levelWords.length; i++){
-      const word = new Word(levelWords[i].word, levelWords[i].wordTranslate)
-      html += word.htmlCode
-    }
+    //const word = new Word(levelWords[page].word, levelWords[page].wordTranslate)
+    //html += word.htmlCode
+
     const container = document.createElement('div')
     container.classList.add('card-wrapper')
     container.innerHTML = html

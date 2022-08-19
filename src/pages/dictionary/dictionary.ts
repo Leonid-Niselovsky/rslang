@@ -1,5 +1,8 @@
+import './main.scss'
 import ApiWords from "../../api/apiWords"
 import { Words } from "./words"
+import {Words as IWord} from './../../api/interface'
+
 
 enum accordance {
   A1 = 0,
@@ -12,15 +15,6 @@ enum accordance {
 
 export class DifficultyLevels {
 
-  private _currentLevel: string
-
-  get currentLevel(): string{
-    return this._currentLevel
-  }
-
-  set currentLevel(level: string){
-    this._currentLevel = level
-  }
 
   private numberOfPages: number = 30
   private levels: NodeListOf<Element>
@@ -42,17 +36,17 @@ export class DifficultyLevels {
           this.words.push(level, await this.getWordsChunk(accordance[level]))
         }
         this.words.log()
-        this.currentLevel = level
-        this.words.render(this.currentLevel)
+        this.words.currentLevel = level
+        this.words.render(this.words.currentLevel, 1)
       })
     })
   }
 
   async getWordsChunk(level: number){
-    const chunk = []
+    let chunk = new Map<number, IWord[]>()
     for(let i = 0; i < this.numberOfPages; i++){
       const wordArr = await this.apiWords.getChunkOfWords(i, level)
-      chunk.push(...wordArr)
+      chunk.set(i, wordArr)
     }
     return chunk
   }
