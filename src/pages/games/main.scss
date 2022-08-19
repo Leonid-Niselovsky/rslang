@@ -1,9 +1,13 @@
-/* бнуляю стили */
+/* обнуляю стили */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
+a {
+  text-decoration: none;
+  color: black;
+ }
 ul[class],
 ol[class] {
   padding: 0;
@@ -37,6 +41,9 @@ ol[class] {
 a:not([class]) {
   text-decoration-skip-ink: auto;
 }
+li{
+    list-style-type: none;
+}
 img {
   max-width: 100%;
   display: block;
@@ -64,37 +71,14 @@ select {
 }
 .audioChalenge,
 .sprint{
+  position: absolute;
   width: 100%;
   height: 100vh;
-  // display: none;
   color: white;
 }
-/* градиент анимации скопирован https://techrocks.ru/2021/04/12/pure-html-and-css-background-animations/  */
-.audioChalenge{
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-@keyframes gradient {
-  0% {
-      background-position: 0% 50%;
-  }
-  50% {
-      background-position: 100% 50%;
-  }
-  100% {
-      background-position: 0% 50%;
-  }
-}
-.menu{
-  display: flex;
-  flex-direction: row;
-  font-size: 18px;
-  font-weight:Medium;
 
-}
-.logo{
-  font-size: 18px;
-  flex-grow: 1;
-  font-weight:Medium;
-}
+
+
+
+
+
