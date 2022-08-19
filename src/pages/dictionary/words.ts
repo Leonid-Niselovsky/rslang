@@ -11,6 +11,7 @@ interface IWords {
   'C2': Map<number, IWord>,
 }
 
+let instance
 
 export class Words {
 
@@ -37,6 +38,7 @@ export class Words {
 
 
   constructor() {
+    if(!instance) instance = this
     this._allWords = {
       'A1': new Map<number, IWord>(),
       'A2': new Map<number, IWord>(),
@@ -45,7 +47,7 @@ export class Words {
       'C1': new Map<number, IWord>(),
       'C2': new Map<number, IWord>(),
     }
-
+    return instance
   }
 
   push(level: string, chunk: Map<number, IWord[]>){
@@ -54,6 +56,7 @@ export class Words {
   }
 
   checkLevel(level: string): boolean{
+    // if(!this.allWords[level]) return false
     if(!this.allWords[level].size) return false
     return true
   }
@@ -72,18 +75,18 @@ export class Words {
 
   render(level: string, page: number){
 
-    const prevContainer: HTMLElement = document.querySelector('.card-wrapper')
-    if(prevContainer) prevContainer.remove()
+    const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
 
     const levelWords = this.getLevelWords(level)
     let html = ""
-    //const word = new Word(levelWords[page].word, levelWords[page].wordTranslate)
-    //html += word.htmlCode
+    const size = levelWords.get(page).length
 
-    const container = document.createElement('div')
-    container.classList.add('card-wrapper')
-    container.innerHTML = html
-    document.body.append(container)
+    for(let i = 0; i < size; i++) {
+      const word = new Word(levelWords.get(page)[i].word, levelWords.get(page)[i].wordTranslate)
+      html += word.htmlCode
+    }
+
+    cardWrapper.innerHTML = html
   }
 
 }

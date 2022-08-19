@@ -2,7 +2,7 @@ import './main.scss'
 import ApiWords from "../../api/apiWords"
 import { Words } from "./words"
 import {Words as IWord} from './../../api/interface'
-
+import { Pagination } from './pagination'
 
 enum accordance {
   A1 = 0,
@@ -20,10 +20,12 @@ export class DifficultyLevels {
   private levels: NodeListOf<Element>
   private apiWords: ApiWords
   private words: Words
+  private pagination: Pagination
 
   constructor(){
     this.words = new Words()
     this.apiWords = new ApiWords()
+    this.pagination = new Pagination()
     const levelsList = document.querySelectorAll('.level')
     this.levels = levelsList 
   }
@@ -37,6 +39,8 @@ export class DifficultyLevels {
         }
         this.words.log()
         this.words.currentLevel = level
+        this.pagination.currentPage = 1
+        this.pagination.reset()
         this.words.render(this.words.currentLevel, 1)
       })
     })
@@ -46,7 +50,7 @@ export class DifficultyLevels {
     let chunk = new Map<number, IWord[]>()
     for(let i = 0; i < this.numberOfPages; i++){
       const wordArr = await this.apiWords.getChunkOfWords(i, level)
-      chunk.set(i, wordArr)
+      chunk.set(i + 1, wordArr)
     }
     return chunk
   }
