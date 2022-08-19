@@ -15,6 +15,7 @@
 }
 
 $fontcolor-white: #EEEEE2;
+$shadow-text: 0 0 1px #000000;
 
 * {
   box-sizing: border-box;
@@ -32,15 +33,15 @@ body {
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  // max-width: 1200px;
+  margin: 0 200px;
   // border: 1px solid rgb(253, 169, 11);
   height: 100%;
 }
 
 .header {
   // display: flex;
-  height: 80px;
+  height: 100px;
   z-index: 0;
   // border: 1px solid rgb(30, 213, 100);
 }
@@ -50,6 +51,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   height: 100%;
+
   
   // border: 1px solid rgb(82, 99, 252);
 }
@@ -66,6 +68,7 @@ body {
   font-family: "Gilroy-Bold";
   letter-spacing: 2px;
   border-bottom: 1px solid gold;
+  text-shadow: $shadow-text;
 }
 
 .nav {
@@ -86,6 +89,7 @@ body {
 .li_nav {
   // border: 1px solid rgb(82, 249, 252);
   padding: 0 20px;
+  text-shadow: $shadow-text;
 }
 
 .link_nav {
@@ -112,6 +116,7 @@ body {
   border-radius: 10px;
   padding: 10px;
   font-size: 1.3rem;
+  text-shadow: $shadow-text;
 }
 
 .link_nav:hover {
@@ -129,13 +134,88 @@ body {
 }
 
 .background_img {
+  display: flex;
   background: url('../../assets/img/1.jpg') no-repeat center;
-  height: 500px;
+  // height: 500px;
   background-size: cover;
-  margin-top: -80px;
-  height: 100vh;
+  margin-top: -100px;
+  height: 900px;
+}
+
+.welcome {
+  margin-top: 600px;
+  color: $fontcolor-white;
+  font-family: "Gilroy-Bold";
+  font-size: 3.3rem;
+  text-align: center;
+  // border: 1px solid rgb(225, 232, 24);
+  text-shadow: $shadow-text;
 }
 
 .footer {
   // border: 1px solid rgb(30, 213, 100);
+}
+
+@media screen and (min-width: 1280px) and (max-width: 1460px) {
+  .container {
+    margin: 0 100px;
+  }
+  
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1279px) {
+  .container {
+    margin: 0 40px;
+  }
+  .link_logo {
+    font-size: 1.6rem;
+  }
+  .link_nav_reg {
+    font-size: 1.1rem;
+  }
+  .link_reg {
+    font-size: 1.2rem;
+  }
+  .li_nav {
+    padding: 0 5px;
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 999px) {
+  .container {
+    margin: 0 10px;
+  }
+  .link_logo {
+    font-size: 1.1rem;
+  }
+  .link_nav_reg {
+    font-size: 1rem;
+  }
+  .link_reg {
+    font-size: 1rem;
+  }
+  .li_nav {
+    padding: 0 5px;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 799px) {
+  .container {
+    margin: 0 10px;
+  }
+  .link_logo {
+    font-size: 1rem;
+  }
+  .link_nav_reg {
+    display: none;
+  }
+  .link_reg {
+    font-size: 1rem;
+  }
+  .li_nav {
+    padding: 0 5px;
+  }
+  .welcome {
+    font-size: 2rem;
+  }
 }
