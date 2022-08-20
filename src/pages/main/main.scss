@@ -1,3 +1,296 @@
+@import '../../colors/colors';
+
+$shadow-text: 0 0 1px #000000;
+
+@font-face {
+  font-family: "Gilroy-Bold";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Gilroy-Bold"),
+       url("../../assets/fonts/FontsFree-Net-Gilroy-Bold.ttf") format("ttf"),
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Roboto"),
+       url("../../assets/fonts/Roboto-Thin.ttf") format("ttf"),
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+} 
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: bisque;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: 0 200px;
+  height: 100%;
+}
+
+.header {
+  height: 100px;
+  z-index: 0;
+}
+
+.header_wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.link_logo {
+  font-size: 2.2rem;
+  font-family: "Gilroy-Bold";
+  letter-spacing: 2px;
+  border-bottom: 1px solid $gold-color;
+  text-shadow: $shadow-text;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.ul_nav {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+}
+
+.li_nav {
+  padding: 0 20px;
+  text-shadow: $shadow-text;
+}
+
+.link_nav {
+  text-decoration: none;
+  color: $text-color;
+  font-weight: 800;
+}
+
+.registration {
+  display: flex;
+  align-items: center;
+}
+
+.link_nav_reg {
+  font-family: 'Roboto';
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+}
+
+.link_reg {
+  border: 1px solid $gold-color;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 1.3rem;
+  text-shadow: $shadow-text;
+}
+
+.link_nav:hover {
+  color: #ffffff;
+}
+
+.link_nav:active {
+  color: $gold-color;
+  transform: scale(1.1);
+}
+
+.background_img {
+  display: flex;
+  background: url('../../assets/img/1.jpg') no-repeat center;
+  background-size: cover;
+  margin-top: -100px;
+  height: 900px;
+}
+
+.welcome {
+  margin-top: 600px;
+  color: $text-color;
+  font-family: "Gilroy-Bold";
+  font-size: 3.3rem;
+  text-align: center;
+  text-shadow: $shadow-text;
+}
+
+.footer {
+}
+
+.burger {
+  position: absolute;
+}
+
+@media screen and (min-width: 1280px) and (max-width: 1460px) {
+  .container {
+    margin: 0 100px;
+  }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1279px) {
+  .container {
+    margin: 0 40px;
+  }
+
+  .link_nav_reg {
+    font-size: 1.1rem;
+  }
+  .link_reg {
+    font-size: 1.2rem;
+  }
+  .li_nav {
+    padding: 0 10px;
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 999px) {
+  .container {
+    margin: 0 20px;
+  }
+  .link_logo {
+    font-size: 1.9rem;
+  }
+  .link_nav_reg {
+    font-size: 1rem;
+  }
+  .link_reg {
+    font-size: 1rem;
+  }
+  .li_nav {
+    padding: 0 5px;
+  }
+}
+
+@media screen and (max-width: 799px) {
+  .container {
+    margin: 0 20px;
+  }
+  .link_logo {
+    font-size: 1.8rem;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .link_reg {
+    font-size: 1rem;
+  }
+  .li_nav {
+    padding: 0 5px;
+  }
+  .welcome {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+  .burger {
+    display: flex;
+    align-items: center;
+  }
+
+  .burger_menu {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .band {
+    display: block;
+    width: 40px;
+    height: 3px;
+    margin: 10px auto;
+    background-color: #ffffff;
+    transition: 0.3s;
+  }
+
+  .popup {
+    display: flex;
+    position: fixed;
+    top: 100px;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 2;
+    transition: 0.3s;
+  }
+
+  .popup.open {
+    left: 0;
+  }
+
+  .ul_nav {
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    height: 100%;
+    padding: 50px 0;
+    padding-bottom: 150px;
+    background-color: #CF6254;
+    overflow: auto;
+  }
+  
+  .ul_nav > li {
+    padding: 20px 0;
+  }
+
+  .ul_nav > li > a {
+    font-size: 3rem;
+  }
+
+  .active .band:nth-child(2){
+    opacity: 0;
+  }
+
+  .active .band:nth-child(1){
+    transform: translateY(13px) rotate(45deg);
+  }
+
+  .active .band:nth-child(3){
+    transform: translateY(-13px) rotate(-45deg);
+  }
+
+  body.dontscroll {
+    overflow: hidden;
+  }
+
+  .burger {
+    position: relative;
+  }
+
+}
+
+@media screen and (max-width: 499px) {
+  .ul_nav > li > a {
+    font-size: 2rem;
+  }
+
+  .burger_menu {
+    padding: 0px 0px;
+    cursor: pointer;
+  }
+
+  .link_logo {
+    font-size: 1.2rem;
+  }
 }
