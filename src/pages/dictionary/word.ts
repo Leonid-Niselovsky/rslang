@@ -8,16 +8,6 @@ export class Word {
     return this._htmlCode
   }
 
-  
-
-  // constructor(word: string, wordTranslate: string){
-  //   this._htmlCode = `
-  //     <button class='card-word ${word}'>
-  //       <h4 card-word-title>${word}</h4>
-  //       <span class card-word-translate>${wordTranslate}</span>
-  //     </button>
-  //   `
-  // }
 
   cardCreate(word: string, wordTranslate: string): HTMLButtonElement{
 
