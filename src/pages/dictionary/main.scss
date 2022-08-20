@@ -1,6 +1,22 @@
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .card-wrapper{
   max-width: 900px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(5, 1fr);
+}
+
+.card-word{
+  animation-duration: 1s;
+  animation-name: appear;
 }

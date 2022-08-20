@@ -1,7 +1,6 @@
 import {Words as IWord} from './../../api/interface'
 import { Word } from './word'
 
-
 interface IWords {
   'A1': Map<number, IWord>,
   'A2': Map<number, IWord>,
@@ -56,7 +55,6 @@ export class Words {
   }
 
   checkLevel(level: string): boolean{
-    // if(!this.allWords[level]) return false
     if(!this.allWords[level].size) return false
     return true
   }
@@ -75,18 +73,26 @@ export class Words {
 
   render(level: string, page: number){
 
+    this.renderCardButton(level, page)
+
+  }
+
+  renderCardButton(level: string, page: number){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
 
     const levelWords = this.getLevelWords(level)
-    let html = ""
+    cardWrapper.innerHTML = ""
     const size = levelWords.get(page).length
 
     for(let i = 0; i < size; i++) {
-      const word = new Word(levelWords.get(page)[i].word, levelWords.get(page)[i].wordTranslate)
-      html += word.htmlCode
+      const word = new Word()
+      cardWrapper.append(word.cardCreate(levelWords.get(page)[i].word, levelWords.get(page)[i].wordTranslate))
     }
 
-    cardWrapper.innerHTML = html
+  }
+
+  onClick(level: string, page: number, word: IWord){
+    
   }
 
 }
