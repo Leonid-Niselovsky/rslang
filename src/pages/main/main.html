@@ -1,14 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RS-Lang</title>
-</head>
-<body>
-  <div class="container">Container
-    <a href="./games.html">game!</a>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RS-Lang</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header_wrapper">
+          <div class="burger">
+            <div class="burger_menu" id="burger">
+              <span class="band"></span>
+              <span class="band"></span>
+              <span class="band"></span>
+            </div>
+          </div>
+          <div class="logo">
+            <a href="./main.html" class="link_nav link_logo">english_pal</a>
+          </div>
+          <nav class="nav">
+            <ul class="ul_nav" id="menu">
+              <li class="li_nav">
+                <a href="./dictionary.html" class="link_nav link_nav_reg"
+                  >Textbook</a
+                >
+              </li>
+              <li class="li_nav">
+                <a href="./games.html" class="link_nav link_nav_reg"
+                  >Game "Audio Call"</a
+                >
+              </li>
+              <li class="li_nav">
+                <a href="./games.html" class="link_nav link_nav_reg"
+                  >Game "Sprint"</a
+                >
+              </li>
+              <li class="li_nav">
+                <a href="./statistics.html" class="link_nav link_nav_reg"
+                  >Statistics</a
+                >
+              </li>
+            </ul>
+          </nav>
+          <div class="registration">
+            <a href="./login.html" class="link_nav link_nav_reg link_reg"
+              >Login</a
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="popup" id="popup"></div>
+    <main class="main">
+      <div class="background_img">
+        <div class="container">
+          <div class="welcome">
+            Приложение english_pal поможет вам легко выучить английский с
+            помощью словаря и игр
+          </div>
+        </div>
+      </div>
+      <section class="video">
+        <div class="container">
+          <div class="video_wrapper">
+            <div class="video_header">
+              Посмотрите втупительное видео, чтобы ближе ознакомиться с работой
+              приложения
+            </div>
+            <div class="video_container">
+              <div class="video_source">
+                <iframe
+                  src="https://www.youtube.com/embed/AZ894GcCTfo"
+                  title="YouTube video player"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      <!-- <div class="container"></div> -->
+    </footer>
+  </body>
 </html>
