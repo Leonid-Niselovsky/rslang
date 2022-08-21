@@ -26,7 +26,15 @@ figcaption,
 blockquote,
 dl,
 dd {
+  font-family: 'Roboto';
   margin: 0;
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Roboto"),
+       url("../../assets/fonts/Roboto-Thin.ttf") format("ttf"),
 }
 body {
   min-height: 100vh;

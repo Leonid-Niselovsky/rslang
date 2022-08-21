@@ -4,3 +4,4 @@ const audioChalenge = new AudioChalenge();
 audioChalenge.addMenu();
 audioChalenge.addLevel();
 audioChalenge.addStart();
+audioChalenge.nextWord();

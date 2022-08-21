@@ -6,12 +6,18 @@ class AudioChalenge{
     words: any[];
     url: string;
     randomFourWords: any[];
+    counter: number;
+    rightWordButton: any;
+    resultArray: boolean[];
     constructor(){
       this.pagesLength=29;
       this.apiWords = new ApiWords;
       this.words=[];
       this.randomFourWords=[];
-      this.url='https://learnwords124.herokuapp.com/'
+      this.counter=0;
+      this.rightWordButton=0;
+      this.url='https://learnwords124.herokuapp.com/';
+      this.resultArray=[];
     }
   addMenu(){
     const btn= document.querySelector('.closeMenu');
@@ -73,7 +79,8 @@ class AudioChalenge{
         if(this.words.length===10){
             startPage.classList.add('displayNoneForGame')
             gamePage.classList.remove('displayNoneForGame')
-            this.fillGamePage(0)
+            this.counter=0;
+            this.fillGamePage(this.counter);
         }
     })
   }
@@ -86,6 +93,7 @@ class AudioChalenge{
     Img.removeAttribute('src')
     const gameButtonsContainer=document.querySelector('.gameButtons');
     const Word=this.words[numberWord];
+    this.rightWordButton=Word;
     const soundUrl=this.url+Word.audio;
     this.playAudio(soundUrl)
     this.getRundomFourWords(numberWord)
@@ -99,16 +107,28 @@ class AudioChalenge{
         for(let i=0;i<gameButtons.length;i++){
             const button=gameButtons[i];
             button.innerHTML=val[i].wordTranslate;
-            if (button.innerHTML===rightWord){
-                rightWord=button
+            // if (button.innerHTML===rightWord){
+            //     rightWord=button
+            // }
+            const clone = button.cloneNode(true) as Element;
+            gameButtonsContainer.replaceChild(clone, button);
+            if (clone.innerHTML===rightWord){
+              rightWord=clone
             }
-            button.addEventListener('click',()=>{
-                if( button.innerHTML===Word.wordTranslate){
-                    this.rightWord(button, wordImage,wordInEnglich)
-                }else{
-                    this.wrongWord(button,rightWord, wordImage,wordInEnglich)
-                }
-            })
+            clone.addEventListener('click',()=>{
+                  if( clone.innerHTML===Word.wordTranslate){
+                      this.rightWord(clone, wordImage,wordInEnglich)
+                  }else{
+                      this.wrongWord(clone,rightWord, wordImage,wordInEnglich)
+                  }
+              })
+            // button.addEventListener('click',()=>{
+            //     if( button.innerHTML===Word.wordTranslate){
+            //         this.rightWord(button, wordImage,wordInEnglich)
+            //     }else{
+            //         this.wrongWord(button,rightWord, wordImage,wordInEnglich)
+            //     }
+            // })
         }
     })
   }
@@ -154,11 +174,13 @@ class AudioChalenge{
   rightWord(button: Element,wordImage,wordInEnglich){
     this.clickWord(wordImage,wordInEnglich)
     button.classList.add('rightWord')
+    this.resultArray.push(true)
   }
   wrongWord(button: Element, rightButton: Element,wordImage,wordInEnglich){
     this.clickWord(wordImage,wordInEnglich)
     button.classList.add('wrongWord')
     rightButton.classList.add('rightWord')
+    this.resultArray.push(false)
   }
   clickWord(wordImage,wordInEnglich){
     const nextButton=document.querySelector('.gameNextButton');
@@ -167,6 +189,46 @@ class AudioChalenge{
     img.setAttribute('src', this.url+wordImage)
     nextButton.innerHTML='Next'
     wordInEnglish.innerHTML=wordInEnglich
+  }
+  nextWord(){
+    const button= document.querySelector('.gameNextButton');
+    
+    button.addEventListener('click', ()=>{
+      const Text=button.innerHTML;
+      Text==='Next'?this.nextButton():this.doNotKnowButton()
+    })
+  }
+  doNotKnowButton(){
+    const wordImage=this.rightWordButton.image;
+    const wordInEnglish=this.rightWordButton.word;
+    const wordTranslate= this.rightWordButton.wordTranslate
+    const gameButtonsContainer=document.querySelector('.gameButtons');
+    const gameButtons=gameButtonsContainer.children;
+        for(let i=0;i<gameButtons.length;i++){
+          const button=gameButtons[i];
+          if(button.innerHTML===wordTranslate){
+            this.clickWord(wordImage,wordInEnglish)
+            button.classList.add('rightWord')
+            // this.rightWord(button, wordImage,wordInEnglish)
+            this.resultArray.pop()
+            this.resultArray.push(false)
+          }     
+        }
+  }
+  nextButton(){
+    const gameButtonsContainer=document.querySelector('.gameButtons');
+    const gameButtons=gameButtonsContainer.children;
+        for(let i=0;i<gameButtons.length;i++){
+          gameButtons[i].classList.remove('rightWord')
+          gameButtons[i].classList.remove('wrongWord')
+        }
+    this.counter+=1;
+    if (this.counter<10){
+      this.fillGamePage(this.counter)
+    }else{
+      console.log(this.resultArray)
+      // final page
+    }
   }
 }
 export default AudioChalenge;
