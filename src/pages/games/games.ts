@@ -1,4 +1,7 @@
 import './main.scss';
-
-let container = document.querySelector('.container') as HTMLBodyElement;
-container.style.color = 'green';
+import AudioChalenge from './audioChalenge/audioChalenge'
+const audioChalenge = new AudioChalenge();
+audioChalenge.addMenu();
+audioChalenge.addLevel();
+audioChalenge.addStart();
+audioChalenge.nextWord();
