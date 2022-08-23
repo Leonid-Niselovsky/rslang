@@ -1,6 +1,6 @@
 import './main.scss'
 import ApiWords from "../../api/apiWords"
-import { Words } from "./words"
+import { Words } from './words'
 import {Words as IWord} from './../../api/interface'
 import { Pagination } from './pagination'
 

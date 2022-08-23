@@ -86,13 +86,93 @@ export class Words {
 
     for(let i = 0; i < size; i++) {
       const word = new Word()
-      cardWrapper.append(word.cardCreate(levelWords.get(page)[i].word, levelWords.get(page)[i].wordTranslate))
+      cardWrapper.append(word.cardCreate(levelWords.get(page)[i], this.renderSideBar))
     }
 
   }
 
-  onClick(level: string, page: number, word: IWord){
-    
+  renderSideBar(word: IWord){
+    const url = 'https://learnwords124.herokuapp.com/'
+    const sideBar: HTMLElement = document.querySelector('.side-bar')
+    sideBar.innerHTML = ''
+    const html = `
+      <img class="word-img" src="${url}${word.image}">
+      <div class="word-overview">    
+        <h3 class="word-title">${word.word}</h3>
+        <h4 class="word-subtitle">${word.wordTranslate}</h4>
+        <span class="word-transcription">${word.transcription}</span>
+      </div>
+    `
+    sideBar.innerHTML = html
+
+    const overview = document.querySelector('.word-overview')
+
+    const audio = audioPlayback(word, url)
+    overview.append(audio)
+
+    const wordControls = document.createElement('div')
+    wordControls.classList.add('word-controls')
+    const controlsHtml = `
+      <button class="word-control hard-word">Добавить в сложные</button>
+      <button class="word-control remove-word">Удалить</button>
+      <button class="word-control learned-word">Отметить как изученное</button>
+    `
+    wordControls.innerHTML = controlsHtml
+    sideBar.append(wordControls)
+
+    const wordDescription = document.createElement('div')
+    wordDescription.classList.add('word-description')
+    const wordDescriptionHtml = ` 
+        <h2">Значение</h2>
+        <div class="word-meaning">${word.textMeaning}</div>
+        <div class="word-meaning-translate">${word.textMeaningTranslate}</div>
+        <h2>Пример</h2>
+        <div class="word-example">${word.textExample}</div>
+        <div class="word-meaning-translate">${word.textExampleTranslate}</div>
+    `
+    wordDescription.innerHTML = wordDescriptionHtml
+    sideBar.append(wordDescription)
+
+    const ingameStatistic = document.createElement('div')
+    ingameStatistic.classList.add('ingame-statistic')
+    const ingameStatisticHtml = `
+      <h2>Правильных ответов в играх</h2>
+      <div class="ingame-statistic">
+        <span class="game-name">Аудиовызов</span>
+        <span class="game-statistic">0/0</span>
+      </div>
+      <div class="ingame-statistic">
+        <span class="game-name">Спринт</span>
+        <span class="game-statistic">0/0</span>
+      </div>
+    `
+    ingameStatistic.innerHTML = ingameStatisticHtml
+    sideBar.append(ingameStatistic)
   }
 
+
+
 }
+
+function audioPlayback(word: IWord, url: string): HTMLAudioElement{
+    
+  const sources = [word.audio, word.audioExample, word.audioMeaning]
+  let current = 0;
+
+  const audio: HTMLAudioElement = document.createElement('audio')
+  audio.setAttribute('controls', '')
+  audio.src = `${url}${sources[current]}`
+  audio.onended = function(){
+    current++;
+    if (current >= sources.length) {
+      current = 0
+      audio.src = `${url}${sources[current]}`
+      return null
+    }
+    audio.src = `${url}${sources[current]}`;
+    audio.play();
+  }
+
+  return audio
+}
+

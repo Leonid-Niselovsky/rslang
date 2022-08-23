@@ -9,19 +9,20 @@ export class Word {
   }
 
 
-  cardCreate(word: string, wordTranslate: string): HTMLButtonElement{
+  cardCreate(word: IWord, handler): HTMLButtonElement{
 
     const button: HTMLButtonElement = document.createElement('button')
-    button.classList.add('card-word', word)
+    button.classList.add('card-word', word.word)
 
     const h4: HTMLHeadElement = document.createElement('h4')
     h4.classList.add('card-word-title')
-    h4.textContent = word
+    h4.textContent = word.word
 
     const span: HTMLHeadElement = document.createElement('span')
     span.classList.add('card-word-translate')
-    span.textContent = wordTranslate
+    span.textContent = word.wordTranslate
 
+    button.addEventListener('click', () => handler(word))
     button.append(h4, span)
 
     return button
