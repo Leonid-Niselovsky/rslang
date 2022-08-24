@@ -3,14 +3,14 @@ import {Words as IWord} from './../../api/interface'
 import { Word } from './word'
 import {accordance} from './dictionary'
 
-interface IWords {
-  'A1': Map<number, IWord>,
-  'A2': Map<number, IWord>,
-  'B1': Map<number, IWord>,
-  'B2': Map<number, IWord>,
-  'C1': Map<number, IWord>,
-  'C2': Map<number, IWord>,
-}
+// interface IWords {
+//   'A1': Map<number, IWord>,
+//   'A2': Map<number, IWord>,
+//   'B1': Map<number, IWord>,
+//   'B2': Map<number, IWord>,
+//   'C1': Map<number, IWord>,
+//   'C2': Map<number, IWord>,
+// }
 
 let instance
 
@@ -28,58 +28,58 @@ export class Words {
   }
 
 
-  private _allWords: IWords
+  // private _allWords: IWords
 
-  set allWords(words: IWords){
-    this._allWords = words
-  }
+  // set allWords(words: IWords){
+  //   this._allWords = words
+  // }
 
-  get allWords(): IWords{
-    return this._allWords
-  }
+  // get allWords(): IWords{
+  //   return this._allWords
+  // }
 
 
   constructor() {
     if(!instance) instance = this
-    this._allWords = {
-      'A1': new Map<number, IWord>(),
-      'A2': new Map<number, IWord>(),
-      'B1': new Map<number, IWord>(),
-      'B2': new Map<number, IWord>(),
-      'C1': new Map<number, IWord>(),
-      'C2': new Map<number, IWord>(),
-    }
+    // this._allWords = {
+    //   'A1': new Map<number, IWord>(),
+    //   'A2': new Map<number, IWord>(),
+    //   'B1': new Map<number, IWord>(),
+    //   'B2': new Map<number, IWord>(),
+    //   'C1': new Map<number, IWord>(),
+    //   'C2': new Map<number, IWord>(),
+    // }
     this.apiWords = new ApiWords()
     return instance
   }
 
-  push(level: string, chunk: Map<number, IWord[]>){
-    if(this.checkLevel(level)) return null
-    this.allWords[level] = chunk
-  }
+  // push(level: string, chunk: Map<number, IWord[]>){
+  //   if(this.checkLevel(level)) return null
+  //   this.allWords[level] = chunk
+  // }
 
-  checkLevel(level: string): boolean{
-    if(!this.allWords[level].size) return false
-    return true
-  }
+  // checkLevel(level: string): boolean{
+  //   if(!this.allWords[level].size) return false
+  //   return true
+  // }
 
-  getLevelWords(level: string): Map<number, IWord[]>{
-    return this.allWords[level]
-  }
+  // getLevelWords(level: string): Map<number, IWord[]>{
+  //   return this.allWords[level]
+  // }
 
-  getLevelPage(page: number){
-    return this.getLevelWords(this.currentLevel)[page]
-  }
+  // getLevelPage(page: number){
+  //   return this.getLevelWords(this.currentLevel)[page]
+  // }
 
-  log(){
-    console.log(this.allWords)
-  }
+  // log(){
+  //   console.log(this.allWords)
+  // }
 
   
   async getWordsPage(level: string, page: string){
     // let chunk = new Map<number, IWord[]>()
     // for(let i = 0; i < this.numberOfPages; i++){
-      const wordArr = await this.apiWords.getChunkOfWords(level, page)
+      const wordArr = await this.apiWords.getChunkOfWords(page, level)
     //   chunk.set(i + 1, wordArr)
     // }
     return wordArr

@@ -41,7 +41,7 @@ export class Pagination {
       if(+this.currentPage === 30) this.nextPage.disabled = true
 
       this.currentPageIndicator.innerText = (this.currentPage).toString()
-      this.words.render(currentLevel, this.currentPage.toString())
+      this.words.render(currentLevel, (+this.currentPage - 1).toString())
     }
 
   }
@@ -58,7 +58,7 @@ export class Pagination {
       if(+this.currentPage === 1) this.prevPage.disabled = true
 
       this.currentPageIndicator.innerText = this.currentPage
-      this.words.render(currentLevel, this.currentPage)
+      this.words.render(currentLevel, (+this.currentPage - 1).toString())
     }
   }
 

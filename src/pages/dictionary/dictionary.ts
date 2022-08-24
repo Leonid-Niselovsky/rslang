@@ -15,7 +15,7 @@ export enum accordance {
 export class DifficultyLevels {
 
 
-  private numberOfPages: number = 30
+  // private numberOfPages: number = 30
   private levels: NodeListOf<Element>
   private apiWords: ApiWords
   private words: Words
@@ -40,7 +40,7 @@ export class DifficultyLevels {
         this.words.currentLevel = level
         this.pagination.currentPage = '1'
         this.pagination.reset()
-        this.words.render(accordance[level], '1')
+        this.words.render(accordance[level], '0')
       })
     })
   }
@@ -49,4 +49,9 @@ export class DifficultyLevels {
 }
 
 const levels = new DifficultyLevels()
+async function a(){
+  const api = new ApiWords()
+  console.log(await api.getChunkOfWords(3,6))
+}
+a()
 levels.onClick()
