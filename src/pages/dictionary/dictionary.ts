@@ -1,16 +1,15 @@
 import './main.scss'
 import ApiWords from "../../api/apiWords"
 import { Words } from './words'
-import {Words as IWord} from './../../api/interface'
 import { Pagination } from './pagination'
 
-enum accordance {
-  A1 = 0,
-  A2 = 1,
-  B1 = 2,
-  B2 = 3,
-  C1 = 4,
-  C2 = 5,
+export enum accordance {
+  A1 = '0',
+  A2 = '1',
+  B1 = '2',
+  B2 = '3',
+  C1 = '4',
+  C2 = '5',
 }
 
 export class DifficultyLevels {
@@ -34,26 +33,18 @@ export class DifficultyLevels {
     this.levels.forEach(el => {
       el.addEventListener('click', async () => {
         const level = el.classList[1].split('level-')[1]
-        if(!this.words.checkLevel(level)){
-          this.words.push(level, await this.getWordsChunk(accordance[level]))
-        }
-        this.words.log()
+        // if(!this.words.checkLevel(level)){
+        //   this.words.push(level, await this.getWordsPage(accordance[level], 1))
+        // }
+        // this.words.log()
         this.words.currentLevel = level
-        this.pagination.currentPage = 1
+        this.pagination.currentPage = '1'
         this.pagination.reset()
-        this.words.render(this.words.currentLevel, 1)
+        this.words.render(accordance[level], '1')
       })
     })
   }
 
-  async getWordsChunk(level: number){
-    let chunk = new Map<number, IWord[]>()
-    for(let i = 0; i < this.numberOfPages; i++){
-      const wordArr = await this.apiWords.getChunkOfWords(i, level)
-      chunk.set(i + 1, wordArr)
-    }
-    return chunk
-  }
   
 }
 

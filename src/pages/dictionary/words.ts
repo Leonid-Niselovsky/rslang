@@ -1,5 +1,7 @@
+import ApiWords from '../../api/apiWords'
 import {Words as IWord} from './../../api/interface'
 import { Word } from './word'
+import {accordance} from './dictionary'
 
 interface IWords {
   'A1': Map<number, IWord>,
@@ -14,6 +16,7 @@ let instance
 
 export class Words {
 
+  private apiWords: ApiWords
   private _currentLevel: string
 
   get currentLevel(): string{
@@ -46,6 +49,7 @@ export class Words {
       'C1': new Map<number, IWord>(),
       'C2': new Map<number, IWord>(),
     }
+    this.apiWords = new ApiWords()
     return instance
   }
 
@@ -71,22 +75,36 @@ export class Words {
     console.log(this.allWords)
   }
 
-  render(level: string, page: number){
+  
+  async getWordsPage(level: string, page: string){
+    // let chunk = new Map<number, IWord[]>()
+    // for(let i = 0; i < this.numberOfPages; i++){
+      const wordArr = await this.apiWords.getChunkOfWords(level, page)
+    //   chunk.set(i + 1, wordArr)
+    // }
+    return wordArr
+  }
 
-    this.renderCardButton(level, page)
+  async render(level: string, page: string){
+
+    console.log(level, page)
+    const wordsArray = await this.getWordsPage(level, page)
+    console.log(wordsArray)
+    this.currentLevel = level
+    this.renderCardButton(wordsArray)
 
   }
 
-  renderCardButton(level: string, page: number){
+  renderCardButton(words: IWord[]){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
 
-    const levelWords = this.getLevelWords(level)
+    // const levelWords = this.getLevelWords(level)
     cardWrapper.innerHTML = ""
-    const size = levelWords.get(page).length
+    // const size = levelWords.get(+page).length
 
-    for(let i = 0; i < size; i++) {
+    for(let i = 0; i < words.length; i++) {
       const word = new Word()
-      cardWrapper.append(word.cardCreate(levelWords.get(page)[i], this.renderSideBar))
+      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar))
     }
 
   }

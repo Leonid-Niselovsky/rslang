@@ -6,14 +6,14 @@ export class Pagination {
   private nextPage: HTMLButtonElement
   private currentPageIndicator: HTMLSpanElement
   private words: Words
-  private _currentPage: number
+  private _currentPage: string
 
-  set currentPage(page: number){
+  set currentPage(page: string){
     this._currentPage = page
     this.currentPageIndicator.innerText = page.toString()
   }
 
-  get currentPage(): number{
+  get currentPage(): string{
     return this._currentPage
   }
 
@@ -22,7 +22,7 @@ export class Pagination {
     this.prevPage = document.querySelector('.prev')
     this.nextPage = document.querySelector('.next')
     this.currentPageIndicator = document.querySelector('.current-page')
-    this.currentPage = Number(this.currentPageIndicator.innerText)
+    this.currentPage = this.currentPageIndicator.innerText
     console.log(this.currentPage)
     this.words = new Words()
     this.addClickListener()
@@ -30,34 +30,34 @@ export class Pagination {
 
   toNextPage(){
     const currentLevel = this.words.currentLevel
-    if(!currentLevel) return null
+    // if(!currentLevel) return null
 
   
-    if(this.currentPage >= 1 && this.currentPage < 30) {
+    if(+this.currentPage >= 1 && +this.currentPage < 30) {
       this.nextPage.disabled = false
       this.prevPage.disabled = false
-      this.currentPage += 1
+      this.currentPage = (+this.currentPage + 1).toString()
 
-      if(this.currentPage === 30) this.nextPage.disabled = true
+      if(+this.currentPage === 30) this.nextPage.disabled = true
 
       this.currentPageIndicator.innerText = (this.currentPage).toString()
-      this.words.render(currentLevel, this.currentPage)
+      this.words.render(currentLevel, this.currentPage.toString())
     }
 
   }
 
   toPrevPage(){
     const currentLevel = this.words.currentLevel
-    if(!currentLevel) return null
+    // if(!currentLevel) return null
 
-    if(this.currentPage > 1 && this.currentPage <= 30) {
+    if(+this.currentPage > 1 && +this.currentPage <= 30) {
       this.prevPage.disabled = false
       this.nextPage.disabled = false
-      this.currentPage -= 1
+      this.currentPage = (+this.currentPage - 1).toString()
 
-      if(this.currentPage === 1) this.prevPage.disabled = true
+      if(+this.currentPage === 1) this.prevPage.disabled = true
 
-      this.currentPageIndicator.innerText = (this.currentPage).toString()
+      this.currentPageIndicator.innerText = this.currentPage
       this.words.render(currentLevel, this.currentPage)
     }
   }
