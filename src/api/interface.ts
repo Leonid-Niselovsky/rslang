@@ -14,3 +14,27 @@ export interface Words {
     "textMeaningTranslate": string,
     "textExampleTranslate": string
 }
+export interface User{
+    "name": string,
+    "email": string,
+    "password": string
+}
+export interface UserWords {
+    "difficulty": string,
+    "optional": {}
+}
+export interface Statistic{
+    "learnedWords": number,
+    "optional": {}
+}
+export interface Settings{
+    "wordsPerDay": number,
+    "optional": {}
+}
+export interface SignIn{
+    "message": string,
+    "token": string,
+    "refreshToken"?: string,
+    "userId": string,
+    "name"?: string
+}
