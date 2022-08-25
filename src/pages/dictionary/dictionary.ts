@@ -2,6 +2,10 @@ import './main.scss'
 import ApiWords from "../../api/apiWords"
 import { Words } from './words'
 import { Pagination } from './pagination'
+import ApiUsers from '../../api/apiUsers'
+import ApiUsersWords from '../../api/apiUsersWords'
+import ApiUsersSettings from '../../api/apiUsersSettings'
+import ApiSignIn from '../../api/apiSignIn'
 
 export enum accordance {
   A1 = '0',
@@ -49,9 +53,22 @@ export class DifficultyLevels {
 }
 
 const levels = new DifficultyLevels()
-async function a(){
-  const api = new ApiWords()
-  console.log(await api.getChunkOfWords(3,6))
-}
-a()
 levels.onClick()
+
+const apiUsers = new ApiUsers()
+const apiUsersWords = new ApiUsersWords()
+const apiUsersSettings = new ApiUsersSettings()
+const apiSignIn = new ApiSignIn()
+
+async function createUser(name, email, password) {
+  // const response = await apiUsers.createUser(name, email, password)
+  const signIn = await apiSignIn.signIn("pasha1@gmail.com", 'pasha11234')
+  // const newWord = await apiUsersWords.createUserWord(signIn.token, signIn.userId, "5e9f5ee35eb9e72bc21af4a0", 'easy')
+  const allWords = await apiUsersWords.getAllUserWords(signIn.token, signIn.userId)
+  console.log(signIn)
+  // console.log(newWord)
+  console.log(allWords)
+}
+
+createUser("pasha", "pasha1@gmail.com", 'pasha11234')
+

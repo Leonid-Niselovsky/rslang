@@ -77,11 +77,7 @@ export class Words {
 
   
   async getWordsPage(level: string, page: string){
-    // let chunk = new Map<number, IWord[]>()
-    // for(let i = 0; i < this.numberOfPages; i++){
       const wordArr = await this.apiWords.getChunkOfWords(page, level)
-    //   chunk.set(i + 1, wordArr)
-    // }
     return wordArr
   }
 
@@ -104,12 +100,13 @@ export class Words {
 
     for(let i = 0; i < words.length; i++) {
       const word = new Word()
-      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar))
+      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar, this.hardWordHandler, this.leadrnedWordHandler))
     }
+
 
   }
 
-  renderSideBar(word: IWord){
+  renderSideBar(word: IWord, hardWordHandler, learnedWordHandler){
     const url = 'https://learnwords124.herokuapp.com/'
     const sideBar: HTMLElement = document.querySelector('.side-bar')
     sideBar.innerHTML = ''
@@ -132,7 +129,6 @@ export class Words {
     wordControls.classList.add('word-controls')
     const controlsHtml = `
       <button class="word-control hard-word">Добавить в сложные</button>
-      <button class="word-control remove-word">Удалить</button>
       <button class="word-control learned-word">Отметить как изученное</button>
     `
     wordControls.innerHTML = controlsHtml
@@ -166,9 +162,21 @@ export class Words {
     `
     ingameStatistic.innerHTML = ingameStatisticHtml
     sideBar.append(ingameStatistic)
+
+    const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
+    hardWordHandler(hardWord)
+
+    const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
+    learnedWordHandler(learnedWord)
   }
 
+  hardWordHandler(toHardWordsButton: HTMLButtonElement){
+    toHardWordsButton.addEventListener('click', () => console.log('hard'))
+  }
 
+  leadrnedWordHandler(toLearnedWordsButton: HTMLButtonElement){
+    toLearnedWordsButton.addEventListener('click', () => console.log('leanred'))
+  }
 
 }
 

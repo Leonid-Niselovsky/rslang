@@ -9,7 +9,7 @@ export class Word {
   }
 
 
-  cardCreate(word: IWord, handler): HTMLButtonElement{
+  cardCreate(word: IWord, wordCardHandler, hardWordHandler, learnedWordHandler): HTMLButtonElement{
 
     const button: HTMLButtonElement = document.createElement('button')
     button.classList.add('card-word', word.word)
@@ -22,7 +22,7 @@ export class Word {
     span.classList.add('card-word-translate')
     span.textContent = word.wordTranslate
 
-    button.addEventListener('click', () => handler(word))
+    button.addEventListener('click', () => wordCardHandler(word, hardWordHandler, learnedWordHandler))
     button.append(h4, span)
 
     return button
