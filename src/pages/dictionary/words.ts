@@ -63,7 +63,7 @@ export class Words {
   }
 
   async getSignInUser(){
-    const user = await this.apiSignIn.signIn("pasha2@gmail.com", 'pasha11234')
+    const user = await this.apiSignIn.signIn("pasha3@gmail.com", 'pasha11234')
     return user
   }
 
@@ -82,6 +82,20 @@ export class Words {
     this.currentLevel = level
     this.renderCardButton(wordsArray, user)
 
+  }
+
+  async hardWordsRender(){
+    const user = await this.getSignInUser()
+    const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
+    const hardWordsArray = allUserWords.filter(a => {
+      if(a.difficulty === 'hard') return true
+      return false
+    })
+    const wordsArray = hardWordsArray.map(a => {
+      return a.optional
+    }) as IWord[]
+    console.log(wordsArray)
+    this.renderCardButton(wordsArray, user)
   }
 
   renderCardButton(words: IWord[], user: SignIn){
@@ -118,10 +132,11 @@ export class Words {
 
     const wordControls = document.createElement('div')
     wordControls.classList.add('word-controls')
-    const controlsHtml = `
+    const buttons = `
       <button class="word-control hard-word">Добавить в сложные</button>
       <button class="word-control learned-word">Отметить как изученное</button>
     `
+    const controlsHtml = `${user ? buttons: ''}`
     wordControls.innerHTML = controlsHtml
     sideBar.append(wordControls)
 
@@ -165,7 +180,7 @@ export class Words {
     toHardWordsButton.addEventListener('click', async () => {
       const response = await apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
-      await apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', {...word})
+        await apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
       }
     })
   }
@@ -174,8 +189,6 @@ export class Words {
     toLearnedWordsButton.addEventListener('click', async () => {
       const response = await apiUsersWords.getAllUserWords(user.token, user.userId)
       console.log(response)
-      const optional = response[7].optional
-      console.log(Object.entries(optional)[0][1])
     })
   }
 

@@ -23,6 +23,7 @@ export class DifficultyLevels {
 
 
   // private numberOfPages: number = 30
+  private hardWords: HTMLElement
   private levels: NodeListOf<Element>
   private apiWords: ApiWords
   private words: Words
@@ -34,11 +35,12 @@ export class DifficultyLevels {
     this.pagination = new Pagination()
     const levelsList = document.querySelectorAll('.level')
     this.levels = levelsList 
+    this.hardWords = document.querySelector('.hard-words')
   }
 
   onClick(){
     this.levels.forEach(el => {
-      el.addEventListener('click', async () => {
+      el.addEventListener('click', () => {
         const level = el.classList[1].split('level-')[1]
         // if(!this.words.checkLevel(level)){
         //   this.words.push(level, await this.getWordsPage(accordance[level], 1))
@@ -49,6 +51,10 @@ export class DifficultyLevels {
         this.pagination.reset()
         this.words.render(accordance[level], '0')
       })
+    })
+
+    this.hardWords.addEventListener('click', () => {
+      this.words.hardWordsRender()
     })
   }
 
@@ -61,14 +67,14 @@ levels.onClick()
 // const apiUsersWords = new ApiUsersWords()
 // const apiUsers = new ApiUsers()
 // async function createUser(name, email, password) {
-//   // const response = await apiUsers.createUser(name, email, password)
+//   const response = await apiUsers.createUser(name, email, password)
 //   const signIn = await apiSignIn.signIn("pasha2@gmail.com", 'pasha11234')
 //   // const newWord = await apiUsersWords.createUserWord(signIn.token, signIn.userId, "5e9f5ee35eb9e72bc21af4a0", 'easy')
 //   const allWords = await apiUsersWords.getAllUserWords(signIn.token, signIn.userId)
-//   console.log(signIn)
+//   console.log(response)
 //   // console.log(newWord)
 //   console.log(allWords)
 // }
 
-// createUser("pasha2", "pasha2@gmail.com", 'pasha11234')
+// createUser("pasha3", "pasha3@gmail.com", 'pasha11234')
 
