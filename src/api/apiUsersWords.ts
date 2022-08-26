@@ -20,7 +20,7 @@ class ApiUsersWords{
         const Url= `${this.url}${userId}/words/${wordId}`;
         const Json = {
           "difficulty": `${difficulty}`,
-          "optional": {optional}
+          "optional": optional
         }
         const UserWord: Promise<UserWords> = fetch(Url, {
           method: 'POST',
@@ -54,7 +54,7 @@ class ApiUsersWords{
         const Url= `${this.url}${userId}/words/${wordId}`;
         const Json = {
           "difficulty": `${difficulty}`,
-          "optional": {optional}
+          "optional": optional
         }
         const UserWord: Promise<UserWords> = fetch(Url, {
           method: 'PUT',
