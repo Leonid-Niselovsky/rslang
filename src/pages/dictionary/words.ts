@@ -1,7 +1,12 @@
 import ApiWords from '../../api/apiWords'
-import {Words as IWord} from './../../api/interface'
+import {UserWords, Words as IWord} from './../../api/interface'
 import { Word } from './word'
 import {accordance} from './dictionary'
+import ApiUsers from '../../api/apiUsers'
+import ApiUsersWords from '../../api/apiUsersWords'
+import ApiUsersSettings from '../../api/apiUsersSettings'
+import ApiSignIn from '../../api/apiSignIn'
+import {SignIn} from '../../api/interface'
 
 // interface IWords {
 //   'A1': Map<number, IWord>,
@@ -18,6 +23,8 @@ export class Words {
 
   private apiWords: ApiWords
   private _currentLevel: string
+  private apiSignIn: ApiSignIn
+  private apiUsersWords: ApiUsersWords
 
   get currentLevel(): string{
     return this._currentLevel
@@ -50,30 +57,15 @@ export class Words {
     //   'C2': new Map<number, IWord>(),
     // }
     this.apiWords = new ApiWords()
+    this.apiSignIn = new ApiSignIn()
+    this.apiUsersWords = new ApiUsersWords()
     return instance
   }
 
-  // push(level: string, chunk: Map<number, IWord[]>){
-  //   if(this.checkLevel(level)) return null
-  //   this.allWords[level] = chunk
-  // }
-
-  // checkLevel(level: string): boolean{
-  //   if(!this.allWords[level].size) return false
-  //   return true
-  // }
-
-  // getLevelWords(level: string): Map<number, IWord[]>{
-  //   return this.allWords[level]
-  // }
-
-  // getLevelPage(page: number){
-  //   return this.getLevelWords(this.currentLevel)[page]
-  // }
-
-  // log(){
-  //   console.log(this.allWords)
-  // }
+  async getSignInUser(){
+    const user = await this.apiSignIn.signIn("pasha2@gmail.com", 'pasha11234')
+    return user
+  }
 
   
   async getWordsPage(level: string, page: string){
@@ -83,30 +75,29 @@ export class Words {
 
   async render(level: string, page: string){
 
+    const user = await this.getSignInUser()
     console.log(level, page)
     const wordsArray = await this.getWordsPage(level, page)
     console.log(wordsArray)
     this.currentLevel = level
-    this.renderCardButton(wordsArray)
+    this.renderCardButton(wordsArray, user)
 
   }
 
-  renderCardButton(words: IWord[]){
+  renderCardButton(words: IWord[], user: SignIn){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
 
-    // const levelWords = this.getLevelWords(level)
     cardWrapper.innerHTML = ""
-    // const size = levelWords.get(+page).length
 
     for(let i = 0; i < words.length; i++) {
       const word = new Word()
-      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar, this.hardWordHandler, this.leadrnedWordHandler))
+      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar, this.hardWordHandler, this.leadrnedWordHandler, user, this.apiUsersWords))
     }
 
 
   }
 
-  renderSideBar(word: IWord, hardWordHandler, learnedWordHandler){
+  renderSideBar(word: IWord, hardWordHandler, learnedWordHandler, user: SignIn, apiUsersWords: ApiUsersWords){
     const url = 'https://learnwords124.herokuapp.com/'
     const sideBar: HTMLElement = document.querySelector('.side-bar')
     sideBar.innerHTML = ''
@@ -164,20 +155,52 @@ export class Words {
     sideBar.append(ingameStatistic)
 
     const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
-    hardWordHandler(hardWord)
+    hardWordHandler(hardWord, user, apiUsersWords, word)
 
     const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
-    learnedWordHandler(learnedWord)
+    learnedWordHandler(learnedWord, user, apiUsersWords, word)
   }
 
-  hardWordHandler(toHardWordsButton: HTMLButtonElement){
-    toHardWordsButton.addEventListener('click', () => console.log('hard'))
+  hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn, apiUsersWords: ApiUsersWords, word: IWord){
+    toHardWordsButton.addEventListener('click', async () => {
+      const response = await apiUsersWords.getUserWordById(user.token, user.userId, word.id)
+      if(!response) {
+      await apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', {...word})
+      }
+    })
   }
 
-  leadrnedWordHandler(toLearnedWordsButton: HTMLButtonElement){
-    toLearnedWordsButton.addEventListener('click', () => console.log('leanred'))
+  leadrnedWordHandler(toLearnedWordsButton: HTMLButtonElement, user: SignIn, apiUsersWords: ApiUsersWords, word: IWord){
+    toLearnedWordsButton.addEventListener('click', async () => {
+      const response = await apiUsersWords.getAllUserWords(user.token, user.userId)
+      console.log(response)
+      const optional = response[7].optional
+      console.log(Object.entries(optional)[0][1])
+    })
   }
 
+
+    // push(level: string, chunk: Map<number, IWord[]>){
+  //   if(this.checkLevel(level)) return null
+  //   this.allWords[level] = chunk
+  // }
+
+  // checkLevel(level: string): boolean{
+  //   if(!this.allWords[level].size) return false
+  //   return true
+  // }
+
+  // getLevelWords(level: string): Map<number, IWord[]>{
+  //   return this.allWords[level]
+  // }
+
+  // getLevelPage(page: number){
+  //   return this.getLevelWords(this.currentLevel)[page]
+  // }
+
+  // log(){
+  //   console.log(this.allWords)
+  // }
 }
 
 function audioPlayback(word: IWord, url: string): HTMLAudioElement{
@@ -201,4 +224,7 @@ function audioPlayback(word: IWord, url: string): HTMLAudioElement{
 
   return audio
 }
+
+
+
 

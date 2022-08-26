@@ -1,4 +1,5 @@
-import {Words as IWord} from './../../api/interface'
+import ApiUsersWords from '../../api/apiUsersWords'
+import {SignIn, UserWords, Words as IWord} from './../../api/interface'
 
 export class Word {
 
@@ -9,7 +10,7 @@ export class Word {
   }
 
 
-  cardCreate(word: IWord, wordCardHandler, hardWordHandler, learnedWordHandler): HTMLButtonElement{
+  cardCreate(word: IWord, wordCardHandler, hardWordHandler, learnedWordHandler, user: SignIn, apiUsersWords: ApiUsersWords): HTMLButtonElement{
 
     const button: HTMLButtonElement = document.createElement('button')
     button.classList.add('card-word', word.word)
@@ -22,7 +23,7 @@ export class Word {
     span.classList.add('card-word-translate')
     span.textContent = word.wordTranslate
 
-    button.addEventListener('click', () => wordCardHandler(word, hardWordHandler, learnedWordHandler))
+    button.addEventListener('click', () => wordCardHandler(word, hardWordHandler, learnedWordHandler, user, apiUsersWords))
     button.append(h4, span)
 
     return button
