@@ -15,6 +15,7 @@ export class Words {
 
   private apiWords: ApiWords
   private _currentLevel: string
+  private _currentPage: string
   private apiSignIn: ApiSignIn
   private apiUsersWords: ApiUsersWords
 
@@ -24,6 +25,14 @@ export class Words {
 
   set currentLevel(level: string){
     this._currentLevel = level
+  }
+
+  get currentPage(): string{
+    return this._currentPage
+  }
+
+  set currentPage(page: string){
+    this._currentPage = page
   }
 
   constructor() {
@@ -49,13 +58,46 @@ export class Words {
 
   async render(level: string, page: string){
 
+    console.log(localStorage)
     const user = await this.getSignInUser()
     console.log(level, page)
     const wordsArray = await this.getWordsPage(level, page)
-    console.log(wordsArray)
     this.currentLevel = level
+    this.addStyles(user, wordsArray)
     this.renderCardButton(wordsArray, user, false)
 
+  }
+
+  async addStyles(user: SignIn, wordsArray: IWord[]){
+    const hardWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'hard')
+    const learnedWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'learned')
+
+    const hardWordsArray = hardWords.map(a => a.optional) as IWord[]
+    const learnedWordsArray = learnedWords.map(a => a.optional) as IWord[]
+
+    const resultingByHard = this.resultingByIdArray(hardWordsArray, wordsArray)
+    const resultingBylearned = this.resultingByIdArray(learnedWordsArray, wordsArray)
+    console.log(resultingByHard, resultingBylearned)
+
+    resultingByHard.forEach(a => {
+      const el = document.querySelector(`#${a.word}`)
+      el.classList.add('hard')
+    })
+
+    resultingBylearned.forEach(a => {
+      const el = document.querySelector(`#${a.word}`)
+      el.classList.add('learned')
+    })
+  }
+
+  resultingByIdArray(userWords: IWord[], wordsArray: IWord[]){
+    const included: IWord[] = []
+    for(let i = 0; i < userWords.length; i++){
+      for(let j = 0; j < wordsArray.length; j++){
+        if(userWords[i].id === wordsArray[j].id) included.push(userWords[i])
+      }
+    }
+    return included
   }
 
   async hardWordsRender(){
@@ -73,10 +115,23 @@ export class Words {
   }
 
   
+  renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
+    const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
+
+    cardWrapper.innerHTML = ""
+
+    for(let i = 0; i < words.length; i++) {
+      cardWrapper.append(this.cardCreate(words[i],  user, isHardWords))
+    }
+
+
+  }
+
   cardCreate(word: IWord, user: SignIn,  isHardWords: boolean): HTMLButtonElement{
 
     const button: HTMLButtonElement = document.createElement('button')
-    button.classList.add('card-word', word.word)
+    button.classList.add('card-word')
+    button.id = word.word
 
     const h4: HTMLHeadElement = document.createElement('h4')
     h4.classList.add('card-word-title')
@@ -92,17 +147,6 @@ export class Words {
     return button
   }
 
-  renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
-    const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
-
-    cardWrapper.innerHTML = ""
-
-    for(let i = 0; i < words.length; i++) {
-      cardWrapper.append(this.cardCreate(words[i],  user, isHardWords))
-    }
-
-
-  }
 
   renderSideBar(word: IWord, user: SignIn, isHardWords: boolean,){
     const url = 'https://learnwords124.herokuapp.com/'
@@ -181,14 +225,22 @@ export class Words {
       const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
         await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
+        this.render(this.currentLevel, (+this.currentPage - 1).toString())
       }
     })
   }
 
   learnedWordHandler(toLearnedWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
     toLearnedWordsButton.addEventListener('click', async () => {
-      const response = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
-      console.log(response)
+      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
+      if(!response) {
+        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'learned', word)
+        this.render(this.currentLevel, (+this.currentPage - 1).toString())
+      }
+      else{
+        await this.apiUsersWords.updateUserWord(user.token, user.userId, word.id, 'learned', word)
+        this.render(this.currentLevel, (+this.currentPage - 1).toString())
+      }
     })
   }
   
@@ -199,6 +251,10 @@ export class Words {
     })
   }
 
+  localStorageUpdate(page: string, level: string){
+    localStorage.page = page
+    localStorage.level = level
+  }
 }
 
 function audioPlayback(word: IWord, url: string): HTMLAudioElement{

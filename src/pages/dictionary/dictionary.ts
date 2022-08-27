@@ -36,24 +36,24 @@ export class DifficultyLevels {
     const levelsList = document.querySelectorAll('.level')
     this.levels = levelsList 
     this.hardWords = document.querySelector('.hard-words')
+    this.words.render(localStorage.level, localStorage.page)
   }
 
   onClick(){
     this.levels.forEach(el => {
       el.addEventListener('click', () => {
         const level = el.classList[1].split('level-')[1]
-        // if(!this.words.checkLevel(level)){
-        //   this.words.push(level, await this.getWordsPage(accordance[level], 1))
-        // }
-        // this.words.log()
         this.words.currentLevel = level
-        this.pagination.currentPage = '1'
+        localStorage.level = accordance[level]
+        localStorage.page = '0'
+        this.words.currentPage = '1'
         this.pagination.reset()
         this.words.render(accordance[level], '0')
       })
     })
 
     this.hardWords.addEventListener('click', () => {
+      localStorage.level = 'hard-words'
       this.words.hardWordsRender()
     })
   }
@@ -61,6 +61,10 @@ export class DifficultyLevels {
   
 }
 
+
+// localStorage.setItem('page', '0')
+// localStorage.setItem('level', '0')
+// console.log(localStorage)
 const levels = new DifficultyLevels()
 levels.onClick()
 // const apiSignIn = new ApiSignIn()
