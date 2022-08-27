@@ -1,6 +1,6 @@
 import ApiWords from '../../api/apiWords'
 import {UserWords, Words as IWord} from './../../api/interface'
-import { Word } from './word'
+// import { Word } from './word'
 import {accordance} from './dictionary'
 import ApiUsers from '../../api/apiUsers'
 import ApiUsersWords from '../../api/apiUsersWords'
@@ -8,14 +8,6 @@ import ApiUsersSettings from '../../api/apiUsersSettings'
 import ApiSignIn from '../../api/apiSignIn'
 import {SignIn} from '../../api/interface'
 
-// interface IWords {
-//   'A1': Map<number, IWord>,
-//   'A2': Map<number, IWord>,
-//   'B1': Map<number, IWord>,
-//   'B2': Map<number, IWord>,
-//   'C1': Map<number, IWord>,
-//   'C2': Map<number, IWord>,
-// }
 
 let instance
 
@@ -34,28 +26,8 @@ export class Words {
     this._currentLevel = level
   }
 
-
-  // private _allWords: IWords
-
-  // set allWords(words: IWords){
-  //   this._allWords = words
-  // }
-
-  // get allWords(): IWords{
-  //   return this._allWords
-  // }
-
-
   constructor() {
     if(!instance) instance = this
-    // this._allWords = {
-    //   'A1': new Map<number, IWord>(),
-    //   'A2': new Map<number, IWord>(),
-    //   'B1': new Map<number, IWord>(),
-    //   'B2': new Map<number, IWord>(),
-    //   'C1': new Map<number, IWord>(),
-    //   'C2': new Map<number, IWord>(),
-    // }
     this.apiWords = new ApiWords()
     this.apiSignIn = new ApiSignIn()
     this.apiUsersWords = new ApiUsersWords()
@@ -73,6 +45,8 @@ export class Words {
     return wordArr
   }
 
+
+
   async render(level: string, page: string){
 
     const user = await this.getSignInUser()
@@ -80,7 +54,7 @@ export class Words {
     const wordsArray = await this.getWordsPage(level, page)
     console.log(wordsArray)
     this.currentLevel = level
-    this.renderCardButton(wordsArray, user)
+    this.renderCardButton(wordsArray, user, false)
 
   }
 
@@ -95,23 +69,42 @@ export class Words {
       return a.optional
     }) as IWord[]
     console.log(wordsArray)
-    this.renderCardButton(wordsArray, user)
+    this.renderCardButton(wordsArray, user, true)
   }
 
-  renderCardButton(words: IWord[], user: SignIn){
+  
+  cardCreate(word: IWord, user: SignIn,  isHardWords: boolean): HTMLButtonElement{
+
+    const button: HTMLButtonElement = document.createElement('button')
+    button.classList.add('card-word', word.word)
+
+    const h4: HTMLHeadElement = document.createElement('h4')
+    h4.classList.add('card-word-title')
+    h4.textContent = word.word
+
+    const span: HTMLHeadElement = document.createElement('span')
+    span.classList.add('card-word-translate')
+    span.textContent = word.wordTranslate
+
+    button.addEventListener('click', () => this.renderSideBar(word, user, isHardWords))
+    button.append(h4, span)
+
+    return button
+  }
+
+  renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
 
     cardWrapper.innerHTML = ""
 
     for(let i = 0; i < words.length; i++) {
-      const word = new Word()
-      cardWrapper.append(word.cardCreate(words[i], this.renderSideBar, this.hardWordHandler, this.leadrnedWordHandler, user, this.apiUsersWords))
+      cardWrapper.append(this.cardCreate(words[i],  user, isHardWords))
     }
 
 
   }
 
-  renderSideBar(word: IWord, hardWordHandler, learnedWordHandler, user: SignIn, apiUsersWords: ApiUsersWords){
+  renderSideBar(word: IWord, user: SignIn, isHardWords: boolean,){
     const url = 'https://learnwords124.herokuapp.com/'
     const sideBar: HTMLElement = document.querySelector('.side-bar')
     sideBar.innerHTML = ''
@@ -132,11 +125,12 @@ export class Words {
 
     const wordControls = document.createElement('div')
     wordControls.classList.add('word-controls')
+    const deleteButton = `<button class="word-control delete-word">Удалить из сложных</button>`
     const buttons = `
       <button class="word-control hard-word">Добавить в сложные</button>
       <button class="word-control learned-word">Отметить как изученное</button>
     `
-    const controlsHtml = `${user ? buttons: ''}`
+    const controlsHtml = `${!user ? '': isHardWords ? deleteButton : buttons}`
     wordControls.innerHTML = controlsHtml
     sideBar.append(wordControls)
 
@@ -169,51 +163,42 @@ export class Words {
     ingameStatistic.innerHTML = ingameStatisticHtml
     sideBar.append(ingameStatistic)
 
-    const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
-    hardWordHandler(hardWord, user, apiUsersWords, word)
+    if(!isHardWords){
+      const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
+      this.hardWordHandler(hardWord, user,  word)
 
-    const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
-    learnedWordHandler(learnedWord, user, apiUsersWords, word)
+      const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
+      this.learnedWordHandler(learnedWord, user,  word)
+    }
+    else{
+      const deleteWord: HTMLButtonElement = document.querySelector('.delete-word')
+      this.deleteWordHandler(deleteWord, user, word)
+    }
   }
 
-  hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn, apiUsersWords: ApiUsersWords, word: IWord){
+  hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
     toHardWordsButton.addEventListener('click', async () => {
-      const response = await apiUsersWords.getUserWordById(user.token, user.userId, word.id)
+      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
-        await apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
+        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
       }
     })
   }
 
-  leadrnedWordHandler(toLearnedWordsButton: HTMLButtonElement, user: SignIn, apiUsersWords: ApiUsersWords, word: IWord){
+  learnedWordHandler(toLearnedWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
     toLearnedWordsButton.addEventListener('click', async () => {
-      const response = await apiUsersWords.getAllUserWords(user.token, user.userId)
+      const response = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
       console.log(response)
     })
   }
+  
+  deleteWordHandler(deleteWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
+    deleteWordsButton.addEventListener('click', async () => {
+      await this.apiUsersWords.deleteUser(user.token, user.userId, word.id)
+      this.hardWordsRender()
+    })
+  }
 
-
-    // push(level: string, chunk: Map<number, IWord[]>){
-  //   if(this.checkLevel(level)) return null
-  //   this.allWords[level] = chunk
-  // }
-
-  // checkLevel(level: string): boolean{
-  //   if(!this.allWords[level].size) return false
-  //   return true
-  // }
-
-  // getLevelWords(level: string): Map<number, IWord[]>{
-  //   return this.allWords[level]
-  // }
-
-  // getLevelPage(page: number){
-  //   return this.getLevelWords(this.currentLevel)[page]
-  // }
-
-  // log(){
-  //   console.log(this.allWords)
-  // }
 }
 
 function audioPlayback(word: IWord, url: string): HTMLAudioElement{
