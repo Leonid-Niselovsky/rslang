@@ -60,9 +60,11 @@ export class Words {
 
     console.log(localStorage)
     const user = await this.getSignInUser()
-    console.log(level, page)
+    // console.log(level, page)
     const wordsArray = await this.getWordsPage(level, page)
     this.currentLevel = level
+    this.currentPage = page
+    console.log(this.currentPage)
     this.addStyles(user, wordsArray)
     this.renderCardButton(wordsArray, user, false)
 
