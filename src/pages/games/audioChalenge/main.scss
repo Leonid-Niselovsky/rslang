@@ -239,8 +239,7 @@
     justify-content: center;
 }
 .levelSelectionAudioChalenge li,
-.gameNextButton,
-.gameButtons button{
+.gameNextButton{
     z-index: 1;
     border-radius: 25px;
     text-align: center;
@@ -258,10 +257,17 @@
     color: white;
 }
 .gameButtons button{
-    height: 55px;
-    width: 150px;
     background-color: transparent ;
     color: white;
+    z-index: 1;
+    border-radius: 25px;
+    text-align: center;
+    line-height: 45px; 
+    vertical-align: middle;
+    border: solid 2px white;
+    height: 90px;
+    width: 150px;
+    margin: 15px 10px;
 }
 .levelSelectionAudioChalenge li:hover,
 .gameNextButton:hover,
