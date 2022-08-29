@@ -36,7 +36,8 @@ export class DifficultyLevels {
     const levelsList = document.querySelectorAll('.level')
     this.levels = levelsList 
     this.hardWords = document.querySelector('.hard-words')
-    this.words.render(localStorage.level, localStorage.page)
+    if(localStorage.level === 'hard-words') this.words.hardWordsRender()
+    else this.words.render(localStorage.level, localStorage.page)
   }
 
   onClick(){

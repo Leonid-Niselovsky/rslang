@@ -7,7 +7,8 @@ import ApiUsersWords from '../../api/apiUsersWords'
 import ApiUsersSettings from '../../api/apiUsersSettings'
 import ApiSignIn from '../../api/apiSignIn'
 import {SignIn} from '../../api/interface'
-
+import {gameLink} from '../dictionary/gameLink'
+import {audioPlayback} from '../dictionary/audioPlayback'
 
 let instance
 
@@ -57,7 +58,8 @@ export class Words {
 
 
   async render(level: string, page: string){
-
+    const pagination: HTMLElement = document.querySelector('.pagination')
+    pagination.style.display = 'block'
     console.log(localStorage)
     const user = await this.getSignInUser()
     // console.log(level, page)
@@ -65,9 +67,9 @@ export class Words {
     this.currentLevel = level
     this.currentPage = page
     console.log(this.currentPage)
+    this.renderLinks()
     this.addStyles(user, wordsArray)
     this.renderCardButton(wordsArray, user, false)
-
   }
 
   async addStyles(user: SignIn, wordsArray: IWord[]){
@@ -90,6 +92,9 @@ export class Words {
       const el = document.querySelector(`#${a.word}`)
       el.classList.add('learned')
     })
+
+    this.isPageComplete()
+    this.isPageLearned()
   }
 
   resultingByIdArray(userWords: IWord[], wordsArray: IWord[]){
@@ -103,6 +108,8 @@ export class Words {
   }
 
   async hardWordsRender(){
+    const pagination: HTMLElement = document.querySelector('.pagination')
+    pagination.style.display = 'none'
     const user = await this.getSignInUser()
     const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
     const hardWordsArray = allUserWords.filter(a => {
@@ -129,6 +136,7 @@ export class Words {
 
   }
 
+
   cardCreate(word: IWord, user: SignIn,  isHardWords: boolean): HTMLButtonElement{
 
     const button: HTMLButtonElement = document.createElement('button')
@@ -146,6 +154,8 @@ export class Words {
     button.addEventListener('click', () => this.renderSideBar(word, user, isHardWords))
     button.append(h4, span)
 
+    this.isPageComplete()
+    this.isPageLearned()
     return button
   }
 
@@ -222,12 +232,34 @@ export class Words {
     }
   }
 
+  renderLinks(){
+    const gameLinks = document.querySelector('.game-links')
+    gameLinks.innerHTML = ''
+
+    const game1 = 'Audio Call'
+    const game2 = 'Sprint'
+
+    const audioCall = document.createElement('div')
+    audioCall.innerHTML = gameLink(game1)
+    audioCall.classList.add('audio-call')
+
+    const sprint = document.createElement('div')
+    sprint.innerHTML = gameLink(game2)
+    sprint.classList.add('sprint')
+
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+
+
+    gameLinks.append(audioCall, sprint)
+  }
+
   hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
     toHardWordsButton.addEventListener('click', async () => {
       const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
         await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
-        this.render(this.currentLevel, (+this.currentPage - 1).toString())
+        this.render(this.currentLevel, this.currentPage)
       }
     })
   }
@@ -237,11 +269,11 @@ export class Words {
       const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
         await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'learned', word)
-        this.render(this.currentLevel, (+this.currentPage - 1).toString())
+        this.render(this.currentLevel, this.currentPage)
       }
       else{
         await this.apiUsersWords.updateUserWord(user.token, user.userId, word.id, 'learned', word)
-        this.render(this.currentLevel, (+this.currentPage - 1).toString())
+        this.render(this.currentLevel, this.currentPage)
       }
     })
   }
@@ -253,33 +285,40 @@ export class Words {
     })
   }
 
-  localStorageUpdate(page: string, level: string){
-    localStorage.page = page
-    localStorage.level = level
-  }
-}
+  // localStorageUpdate(page: string, level: string){
+  //   localStorage.page = page
+  //   localStorage.level = level
+  // }
 
-function audioPlayback(word: IWord, url: string): HTMLAudioElement{
-    
-  const sources = [word.audio, word.audioExample, word.audioMeaning]
-  let current = 0;
-
-  const audio: HTMLAudioElement = document.createElement('audio')
-  audio.setAttribute('controls', '')
-  audio.src = `${url}${sources[current]}`
-  audio.onended = function(){
-    current++;
-    if (current >= sources.length) {
-      current = 0
-      audio.src = `${url}${sources[current]}`
-      return null
+  isPageComplete(){
+    const cardWrapper = document.querySelector('.card-wrapper')
+    const hardCards = document.querySelectorAll('.hard')
+    const learnedCards = document.querySelectorAll('.learned')
+    if(hardCards.length + learnedCards.length === 20) {
+      cardWrapper.classList.add('completed')
     }
-    audio.src = `${url}${sources[current]}`;
-    audio.play();
+    else cardWrapper.classList.remove('completed')
   }
 
-  return audio
+  isPageLearned(){
+    const learnedCards = document.querySelectorAll('.learned')
+
+    const audioCall = document.querySelector('.audio-call')
+    const sprint = document.querySelector('.sprint')
+
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+    if(learnedCards.length === 20) {
+      audioCallButton.disabled = true
+      sprintButton.disabled = true
+    }
+    else {
+      audioCallButton.disabled = false
+      sprintButton.disabled = false
+    }
+  }
 }
+
 
 
 

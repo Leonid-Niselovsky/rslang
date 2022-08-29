@@ -9,7 +9,12 @@
   }
 }
 
+.textbook{
+  display: flex;
+}
+
 .card-wrapper{
+  width: 60%;
   max-width: 900px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -21,10 +26,16 @@
   animation-name: appear;
 }
 
+
+
 .learned{
   color: purple
 }
 
 .hard{
   color: red;
+}
+
+.completed{
+  border: 4px solid pink;
 }
