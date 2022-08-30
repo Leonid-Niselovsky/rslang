@@ -25,6 +25,7 @@ export class Pagination {
     this.words = new Words()
     this.currentPageIndicator.innerText = (+localStorage.page + 1).toString()
     if(localStorage.page === '0') this.prevPage.disabled = true
+    if(localStorage.page === '29') this.nextPage.disabled = true
     this.addClickListener()
   }
 
