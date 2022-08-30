@@ -24,7 +24,7 @@ export class Pagination {
     this.currentPageIndicator = document.querySelector('.current-page')
     this.words = new Words()
     this.currentPageIndicator.innerText = (+localStorage.page + 1).toString()
-    // this.words.currentPage = this.currentPageIndicator.innerText
+    if(localStorage.page === '0') this.prevPage.disabled = true
     this.addClickListener()
   }
 

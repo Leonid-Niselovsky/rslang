@@ -67,7 +67,7 @@ export class Words {
     this.currentLevel = level
     this.currentPage = page
     console.log(this.currentPage)
-    this.renderLinks()
+    this.renderLinks(user)
     this.addStyles(user, wordsArray)
     this.renderCardButton(wordsArray, user, false)
   }
@@ -79,8 +79,8 @@ export class Words {
     const hardWordsArray = hardWords.map(a => a.optional) as IWord[]
     const learnedWordsArray = learnedWords.map(a => a.optional) as IWord[]
 
-    const resultingByHard = this.resultingByIdArray(hardWordsArray, wordsArray)
-    const resultingBylearned = this.resultingByIdArray(learnedWordsArray, wordsArray)
+    const resultingByHard = this.resultingByIdArray(hardWordsArray, wordsArray, true)
+    const resultingBylearned = this.resultingByIdArray(learnedWordsArray, wordsArray, true)
     console.log(resultingByHard, resultingBylearned)
 
     resultingByHard.forEach(a => {
@@ -97,15 +97,39 @@ export class Words {
     this.isPageLearned()
   }
 
-  resultingByIdArray(userWords: IWord[], wordsArray: IWord[]){
+  resultingByIdArray(userWords: IWord[], wordsArray: IWord[], include: boolean){
     const included: IWord[] = []
-    for(let i = 0; i < userWords.length; i++){
-      for(let j = 0; j < wordsArray.length; j++){
-        if(userWords[i].id === wordsArray[j].id) included.push(userWords[i])
+
+    if(include){
+      for(let i = 0; i < userWords.length; i++){
+        for(let j = 0; j < wordsArray.length; j++){
+            if(userWords[i].id === wordsArray[j].id) {
+              included.push(userWords[i])
+              break
+            }
+        }
+      }
+    }
+
+    else {
+      for(let i = 0; i < wordsArray.length; i++){
+        let flag = false
+        for(let j = 0; j < userWords.length; j++){
+            if(wordsArray[i].id !== userWords[j].id) {
+              flag = true
+            }
+            else{
+              flag = false
+              break
+            }
+        }
+        if(flag) included.push(wordsArray[i])
       }
     }
     return included
   }
+
+
 
   async hardWordsRender(){
     const pagination: HTMLElement = document.querySelector('.pagination')
@@ -232,7 +256,7 @@ export class Words {
     }
   }
 
-  renderLinks(){
+  renderLinks(user: SignIn){
     const gameLinks = document.querySelector('.game-links')
     gameLinks.innerHTML = ''
 
@@ -250,13 +274,15 @@ export class Words {
     const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
     const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
 
+    this.gameLinkHandler(audioCallButton, user)
+    this.gameLinkHandler(sprintButton, user)
 
     gameLinks.append(audioCall, sprint)
   }
 
   hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
     toHardWordsButton.addEventListener('click', async () => {
-      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
+      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id) // Создаю новое пользовательское слово 
       if(!response) {
         await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
         this.render(this.currentLevel, this.currentPage)
@@ -268,27 +294,37 @@ export class Words {
     toLearnedWordsButton.addEventListener('click', async () => {
       const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
       if(!response) {
-        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'learned', word)
+        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'learned', word) // Создаю новое пользовательское слово
         this.render(this.currentLevel, this.currentPage)
       }
       else{
-        await this.apiUsersWords.updateUserWord(user.token, user.userId, word.id, 'learned', word)
+        await this.apiUsersWords.updateUserWord(user.token, user.userId, word.id, 'learned', word) // Обновляю пользовательское слово если пришёл ответ
         this.render(this.currentLevel, this.currentPage)
       }
     })
   }
   
-  deleteWordHandler(deleteWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
+  deleteWordHandler(deleteWordsButton: HTMLButtonElement, user: SignIn, word: IWord){
     deleteWordsButton.addEventListener('click', async () => {
-      await this.apiUsersWords.deleteUser(user.token, user.userId, word.id)
-      this.hardWordsRender()
+      await this.apiUsersWords.deleteUserWord(user.token, user.userId, word.id) // Удаляю слово без проверки потому что кнопка на 
+      this.hardWordsRender()                                                    // которой слушатель есть только у слов которые есть у пользователя
     })
   }
 
-  // localStorageUpdate(page: string, level: string){
-  //   localStorage.page = page
-  //   localStorage.level = level
-  // }
+  gameLinkHandler(gameLink: HTMLButtonElement, user: SignIn){
+    gameLink.addEventListener('click', async () => {
+      const userWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'learned')
+      const learnedWordsArray = userWords.map(a => a.optional) as IWord[]
+      const wordsArray: IWord[] = []
+
+      for(let i = 0; i <= Number(this.currentPage); i++){
+        const pageWords = await this.getWordsPage(this.currentLevel, i.toString())
+        const passedWords = this.resultingByIdArray(learnedWordsArray, pageWords, false)
+        wordsArray.push(...passedWords)
+      }
+      localStorage.wordsForGames = JSON.stringify(wordsArray)
+    })
+  }
 
   isPageComplete(){
     const cardWrapper = document.querySelector('.card-wrapper')
@@ -301,6 +337,8 @@ export class Words {
   }
 
   isPageLearned(){
+    const cardWrapper = document.querySelector('.card-wrapper')
+
     const learnedCards = document.querySelectorAll('.learned')
 
     const audioCall = document.querySelector('.audio-call')
@@ -311,10 +349,12 @@ export class Words {
     if(learnedCards.length === 20) {
       audioCallButton.disabled = true
       sprintButton.disabled = true
+      cardWrapper.classList.add('page-learned')
     }
     else {
       audioCallButton.disabled = false
       sprintButton.disabled = false
+      cardWrapper.classList.remove('page-learned')
     }
   }
 }

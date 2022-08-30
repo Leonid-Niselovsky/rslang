@@ -68,6 +68,7 @@ export class DifficultyLevels {
 // console.log(localStorage)
 const levels = new DifficultyLevels()
 levels.onClick()
+console.log(JSON.parse(localStorage.wordsForGames))
 // const apiSignIn = new ApiSignIn()
 // const apiUsersWords = new ApiUsersWords()
 // const apiUsers = new ApiUsers()
