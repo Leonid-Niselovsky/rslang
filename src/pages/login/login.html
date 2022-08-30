@@ -7,7 +7,11 @@
   <title>RS-Lang</title>
 </head>
 <body>
-
+  <header class="header">
+    <div class="logo">
+      <a href="http://localhost:8080/" class="link_nav link_logo">english_pal</a>
+    </div>
+  </header>
   <article class="container">
 
     <div class="block">
@@ -26,29 +30,29 @@
 
     <div class="form">
 
-      <form action="#" class="form-wrapper form-wrapper_signin">
+      <form class="form-wrapper form-wrapper_signin">
         <h3 class="form-wrapper__head">Login</h3>
         <p>
-          <input type="text" class="form-wrapper__input" placeholder="Login">
+          <input type="e-mail" class="form-wrapper__input signin-email" placeholder="E-mail" required>
         </p>
         <p>
-          <input type="password" class="form-wrapper__input" placeholder="Password">
+          <input type="password" class="form-wrapper__input signin-pass" placeholder="Password" required>
         </p>
         <p>
-          <button class="form-wrapper__btn">Login</button>
+          <button class="form-wrapper__btn form-wrapper__btn-signin">Login</button>
         </p>
       </form>
 
-      <form action="#" class="form-wrapper form-wrapper_signup">
+      <form class="form-wrapper form-wrapper_signup">
         <h3 class="form-wrapper__head">Registration</h3>
         <p>
-          <input type="text" class="form-wrapper__input reg-login" placeholder="Login">
+          <input type="text" class="form-wrapper__input reg-login" placeholder="Login" required>
         </p>
         <p>
-          <input type="e-mail" class="form-wrapper__input reg-email" placeholder="E-mail">
+          <input type="e-mail" class="form-wrapper__input reg-email" placeholder="E-mail" required>
         </p>
         <p>
-          <input type="password" class="form-wrapper__input reg-password" placeholder="Password">
+          <input type="password" class="form-wrapper__input reg-password" placeholder="Password" required>
         </p>
         <p>
           <button class="form-wrapper__btn form-wrapper__btn_signup">Register</button>
