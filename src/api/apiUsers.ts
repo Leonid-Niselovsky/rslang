@@ -22,7 +22,7 @@ class ApiUsers{
       console.log(`Incorrect e-mail or password`): console.log(`ошибка ${data.status}`));
       return createdUser;
     }
-    getUser(token, id){
+    getUser(token, id) {
       const Url= `${this.url}/${id}`;
       const UserById = fetch(Url, {
         method: 'GET',
