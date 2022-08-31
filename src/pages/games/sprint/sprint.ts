@@ -1,6 +1,7 @@
 import './main.scss';
 import ApiWords from '../../../api/apiWords';
 import GameProcess from './gameProcess/gameProcess';
+import StartSprintTextbook from '../startGameTextBook/startSprintTextbook'
 class Sprint{
     apiWords: ApiWords;
     pagesLength: number;
@@ -11,6 +12,7 @@ class Sprint{
     wordsC1: any[];
     wordsC2: any[];
     gameProcess: GameProcess;
+    startSprintTextbook: StartSprintTextbook;
     constructor(){
         this.apiWords = new ApiWords;
         this.wordsA1=[];
@@ -21,18 +23,29 @@ class Sprint{
         this.wordsC2=[];
         this.pagesLength=30
         this.gameProcess=new GameProcess;
+        this.startSprintTextbook=new StartSprintTextbook;
     }
     addMenu(){
-        const btn= document.querySelector('.closeMenu');
+        const btn= document.querySelector('.closeMenu')as Element;
         btn.addEventListener('click',()=>{
-          const menu = document.querySelector('.menu');
+          const menu = document.querySelector('.menu')as Element;
           menu.classList.add('closed')
         })  
-        const butnOpen= document.querySelector('.openMenu');
+        const butnOpen= document.querySelector('.openMenu')as Element;
         butnOpen.addEventListener('click',()=>{
-          const menu = document.querySelector('.menu');
+          const menu = document.querySelector('.menu')as Element;
           menu.classList.remove('closed')
       })
+    }
+    validator(){
+      if(!!window.location.search){
+        this.startSprintTextbook.start()
+        const Level = this.startSprintTextbook.renderingGroup()
+        this.gameProcess.showFirstPageForTextbook(Level);
+      }else{
+        sprint.getChunkOfWords();
+        sprint.addLevel();
+      }
     }
       addLevel(){
         const btns= document.querySelector('.levelSelectionAudioChalenge') as Element;
@@ -47,7 +60,6 @@ class Sprint{
                 const Level=ElementTarget.innerHTML;
                 const resultArr=this.getRandomWordsForGame(Level)
                 this.gameProcess.showFirstPage(resultArr);
-                // console.log(resultArr)
             }
           })
       }
@@ -91,8 +103,8 @@ class Sprint{
     return Math.floor(rand);
   }
   getRandomWordsForGame(Level){
-    let arr=[];
-    let resultArray=[];
+    let arr:any[]=[];
+    let resultArray:any[]=[];
     if(Level==='A1'){
         this.shuffle(this.wordsA1);
         arr.push(...this.wordsA1)
@@ -119,14 +131,15 @@ class Sprint{
     }
     for(let i=0;i<300;i++){
       if(arr.length < 600){
-        const elem = document.querySelector(".contentText");
+        const elem = document.querySelector(".contentText")as Element;
         elem.innerHTML='Слова еще не загрузились, попробуй нажать еще раз'
       }else{
-        const elem = document.querySelector(".contentText");
+        const elem = document.querySelector(".contentText")as Element;
         elem.innerHTML='Попробуй угадать как можно больше слов за минуту.'
         
       }
         const word=arr[i].word;
+        const wordID=arr[i].id
         const wordTanslate=arr[i].wordTranslate;
         const wordAudio=arr[i].audio;
         let wordGuess= this.random(0,1)
@@ -136,6 +149,7 @@ class Sprint{
             wordGuess=arr[i].wordTranslate
         }
         const result={
+            'id':wordID,
             'word':word,
             'wordTranslate':wordTanslate,
             'guessWord':wordGuess,
@@ -146,8 +160,8 @@ class Sprint{
     }
     return resultArray;
   }
+     
 }
 const sprint= new Sprint();
+sprint.validator();
 sprint.addMenu();
-sprint.addLevel();
-sprint.getChunkOfWords();

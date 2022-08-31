@@ -4,12 +4,12 @@ class FinalPage{
         this.url='https://learnwords124.herokuapp.com/'
     }
     showFinalPage(words, result,points){
-        const finalPage=document.querySelector('.finalPage')
-        const gamePage=document.querySelector('.gameSprint')
+        const finalPage=document.querySelector('.finalPage') as Element;
+        const gamePage=document.querySelector('.gameSprint')as Element;
         gamePage.classList.add('displayNoneForGame')
         finalPage.classList.remove('displayNoneForGame')
-        const rightWords=document.querySelector('.finalPageRight')
-        const wrongWords=document.querySelector('.finalPageWrong')
+        const rightWords=document.querySelector('.finalPageRight')as Element;
+        const wrongWords=document.querySelector('.finalPageWrong')as Element;
         while (rightWords.firstChild) {
           rightWords.removeChild(rightWords.firstChild);
         }
@@ -32,7 +32,7 @@ class FinalPage{
         }
         const rightWordNodeList = rightWords.children.length;
         const WrongWordNodeList = wrongWords.children.length;
-        const pointsForGame=document.querySelector('.finalPageHeader')
+        const pointsForGame=document.querySelector('.finalPageHeader')as Element;
         pointsForGame.innerHTML=`Результат: ${points} очков</p>`
         const rightWordCount=`<p>Правильно: ${rightWordNodeList}</p>`
         const wrongWordCount=`<p>Неправильно: ${WrongWordNodeList}</p>`
