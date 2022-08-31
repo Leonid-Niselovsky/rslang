@@ -6,65 +6,69 @@ export class Pagination {
   private nextPage: HTMLButtonElement
   private currentPageIndicator: HTMLSpanElement
   private words: Words
-  private _currentPage: number
+  // private _currentPage: string
 
-  set currentPage(page: number){
-    this._currentPage = page
-    this.currentPageIndicator.innerText = page.toString()
-  }
+  // set currentPage(page: string){
+  //   this._currentPage = page
+  //   this.currentPageIndicator.innerText = page.toString()
+  // }
 
-  get currentPage(): number{
-    return this._currentPage
-  }
+  // get currentPage(): string{
+  //   return this._currentPage
+  // }
 
 
   constructor(){
     this.prevPage = document.querySelector('.prev')
     this.nextPage = document.querySelector('.next')
     this.currentPageIndicator = document.querySelector('.current-page')
-    this.currentPage = Number(this.currentPageIndicator.innerText)
-    console.log(this.currentPage)
     this.words = new Words()
+    this.currentPageIndicator.innerText = (+localStorage.page + 1).toString()
+    if(localStorage.page === '0') this.prevPage.disabled = true
+    if(localStorage.page === '29') this.nextPage.disabled = true
     this.addClickListener()
   }
 
   toNextPage(){
     const currentLevel = this.words.currentLevel
-    if(!currentLevel) return null
+    // if(!currentLevel) return null
 
   
-    if(this.currentPage >= 1 && this.currentPage < 30) {
+    if(+this.words.currentPage >= 0 && +this.words.currentPage < 29) {
       this.nextPage.disabled = false
       this.prevPage.disabled = false
-      this.currentPage += 1
+      this.words.currentPage = (+this.words.currentPage + 1).toString()
+      localStorage.page = this.words.currentPage
 
-      if(this.currentPage === 30) this.nextPage.disabled = true
+      if(+this.words.currentPage === 29) this.nextPage.disabled = true
 
-      this.currentPageIndicator.innerText = (this.currentPage).toString()
-      this.words.render(currentLevel, this.currentPage)
+      this.currentPageIndicator.innerText = (+this.words.currentPage + 1).toString()
+      this.words.render(currentLevel, this.words.currentPage)
     }
 
   }
 
   toPrevPage(){
     const currentLevel = this.words.currentLevel
-    if(!currentLevel) return null
+    // if(!currentLevel) return null
 
-    if(this.currentPage > 1 && this.currentPage <= 30) {
+    if(+this.words.currentPage > 0 && +this.words.currentPage <= 29) {
       this.prevPage.disabled = false
       this.nextPage.disabled = false
-      this.currentPage -= 1
+      this.words.currentPage = (+this.words.currentPage - 1).toString()
+      localStorage.page = this.words.currentPage
 
-      if(this.currentPage === 1) this.prevPage.disabled = true
+      if(+this.words.currentPage === 0) this.prevPage.disabled = true
 
-      this.currentPageIndicator.innerText = (this.currentPage).toString()
-      this.words.render(currentLevel, this.currentPage)
+      this.currentPageIndicator.innerText =  (+this.words.currentPage + 1).toString()
+      this.words.render(currentLevel, this.words.currentPage)
     }
   }
 
   reset(){
     this.prevPage.disabled = true
     this.nextPage.disabled = false
+    this.currentPageIndicator.innerText = '1'
   }
 
   addClickListener(){
