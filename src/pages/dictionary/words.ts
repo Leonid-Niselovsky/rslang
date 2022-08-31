@@ -1,20 +1,24 @@
-import {Words as IWord} from './../../api/interface'
-import { Word } from './word'
-
-interface IWords {
-  'A1': Map<number, IWord>,
-  'A2': Map<number, IWord>,
-  'B1': Map<number, IWord>,
-  'B2': Map<number, IWord>,
-  'C1': Map<number, IWord>,
-  'C2': Map<number, IWord>,
-}
+import ApiWords from '../../api/apiWords'
+import {UserWords, Words as IWord} from './../../api/interface'
+// import { Word } from './word'
+import {accordance} from './dictionary'
+import ApiUsers from '../../api/apiUsers'
+import ApiUsersWords from '../../api/apiUsersWords'
+import ApiUsersSettings from '../../api/apiUsersSettings'
+import ApiSignIn from '../../api/apiSignIn'
+import {SignIn} from '../../api/interface'
+import {gameLink} from '../dictionary/gameLink'
+import {audioPlayback} from '../dictionary/audioPlayback'
 
 let instance
 
 export class Words {
 
+  private apiWords: ApiWords
   private _currentLevel: string
+  private _currentPage: string
+  private apiSignIn: ApiSignIn
+  private apiUsersWords: ApiUsersWords
 
   get currentLevel(): string{
     return this._currentLevel
@@ -24,74 +28,165 @@ export class Words {
     this._currentLevel = level
   }
 
-
-  private _allWords: IWords
-
-  set allWords(words: IWords){
-    this._allWords = words
+  get currentPage(): string{
+    return this._currentPage
   }
 
-  get allWords(): IWords{
-    return this._allWords
+  set currentPage(page: string){
+    this._currentPage = page
   }
-
 
   constructor() {
     if(!instance) instance = this
-    this._allWords = {
-      'A1': new Map<number, IWord>(),
-      'A2': new Map<number, IWord>(),
-      'B1': new Map<number, IWord>(),
-      'B2': new Map<number, IWord>(),
-      'C1': new Map<number, IWord>(),
-      'C2': new Map<number, IWord>(),
-    }
+    this.apiWords = new ApiWords()
+    this.apiSignIn = new ApiSignIn()
+    this.apiUsersWords = new ApiUsersWords()
     return instance
   }
 
-  push(level: string, chunk: Map<number, IWord[]>){
-    if(this.checkLevel(level)) return null
-    this.allWords[level] = chunk
+  async getSignInUser(){
+    const user = await this.apiSignIn.signIn("pasha3@gmail.com", 'pasha11234')
+    return user
   }
 
-  checkLevel(level: string): boolean{
-    if(!this.allWords[level].size) return false
-    return true
+  
+  async getWordsPage(level: string, page: string){
+      const wordArr = await this.apiWords.getChunkOfWords(page, level)
+    return wordArr
   }
 
-  getLevelWords(level: string): Map<number, IWord[]>{
-    return this.allWords[level]
+
+
+  async render(level: string, page: string){
+    const pagination: HTMLElement = document.querySelector('.pagination')
+    pagination.style.display = 'block'
+    console.log(localStorage)
+    const user = await this.getSignInUser()
+    // const user = localStorage.user
+    // console.log(localStorage)
+    // console.log(level, page)
+    const wordsArray = await this.getWordsPage(level, page)
+    this.currentLevel = level
+    this.currentPage = page
+    console.log(this.currentPage)
+    this.renderLinks(user)
+    this.addStyles(user, wordsArray)
+    this.renderCardButton(wordsArray, user, false)
   }
 
-  getLevelPage(page: number){
-    return this.getLevelWords(this.currentLevel)[page]
+  async addStyles(user: SignIn, wordsArray: IWord[]){
+    const hardWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'hard')
+    const learnedWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'learned')
+
+    const hardWordsArray = hardWords.map(a => a.optional) as IWord[]
+    const learnedWordsArray = learnedWords.map(a => a.optional) as IWord[]
+
+    const resultingByHard = this.resultingByIdArray(hardWordsArray, wordsArray, true)
+    const resultingBylearned = this.resultingByIdArray(learnedWordsArray, wordsArray, true)
+    console.log(resultingByHard, resultingBylearned)
+
+    resultingByHard.forEach(a => {
+      const el = document.querySelector(`#${a.word}`)
+      el.classList.add('hard')
+    })
+
+    resultingBylearned.forEach(a => {
+      const el = document.querySelector(`#${a.word}`)
+      el.classList.add('learned')
+    })
+
+    this.isPageComplete()
+    this.isPageLearned()
   }
 
-  log(){
-    console.log(this.allWords)
-  }
+  resultingByIdArray(userWords: IWord[], wordsArray: IWord[], include: boolean){
+    const included: IWord[] = []
 
-  render(level: string, page: number){
-
-    this.renderCardButton(level, page)
-
-  }
-
-  renderCardButton(level: string, page: number){
-    const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
-
-    const levelWords = this.getLevelWords(level)
-    cardWrapper.innerHTML = ""
-    const size = levelWords.get(page).length
-
-    for(let i = 0; i < size; i++) {
-      const word = new Word()
-      cardWrapper.append(word.cardCreate(levelWords.get(page)[i], this.renderSideBar))
+    if(include){
+      for(let i = 0; i < userWords.length; i++){
+        for(let j = 0; j < wordsArray.length; j++){
+            if(userWords[i].id === wordsArray[j].id) {
+              included.push(userWords[i])
+              break
+            }
+        }
+      }
     }
 
+    else {
+      for(let i = 0; i < wordsArray.length; i++){
+        let flag = false
+        for(let j = 0; j < userWords.length; j++){
+            if(wordsArray[i].id !== userWords[j].id) {
+              flag = true
+            }
+            else{
+              flag = false
+              break
+            }
+        }
+        if(flag) included.push(wordsArray[i])
+      }
+    }
+    return included
   }
 
-  renderSideBar(word: IWord){
+
+
+  async hardWordsRender(){
+    const pagination: HTMLElement = document.querySelector('.pagination')
+    pagination.style.display = 'none'
+    const user = await this.getSignInUser()
+    const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
+    const hardWordsArray = allUserWords.filter(a => {
+      if(a.difficulty === 'hard') return true
+      return false
+    })
+    const wordsArray = hardWordsArray.map(a => {
+      return a.optional
+    }) as IWord[]
+    console.log(wordsArray)
+    this.renderCardButton(wordsArray, user, true)
+  }
+
+  
+  renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
+    const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
+
+    cardWrapper.innerHTML = ""
+
+    for(let i = 0; i < words.length; i++) {
+      cardWrapper.append(this.cardCreate(words[i],  user, isHardWords))
+    }
+
+
+  }
+
+
+  cardCreate(word: IWord, user: SignIn,  isHardWords: boolean): HTMLButtonElement{
+
+    const button: HTMLButtonElement = document.createElement('button')
+    button.classList.add('card-word')
+    button.id = word.word
+
+    const h4: HTMLHeadElement = document.createElement('h4')
+    h4.classList.add('card-word-title')
+    h4.textContent = word.word
+
+    const span: HTMLHeadElement = document.createElement('span')
+    span.classList.add('card-word-translate')
+    span.textContent = word.wordTranslate
+
+    button.addEventListener('click', () => this.renderSideBar(word, user, isHardWords))
+    button.append(h4, span)
+
+    this.isPageComplete()
+    this.isPageLearned()
+    return button
+  }
+
+
+  renderSideBar(word: IWord, user: SignIn, isHardWords: boolean,){
     const url = 'https://learnwords124.herokuapp.com/'
     const sideBar: HTMLElement = document.querySelector('.side-bar')
     sideBar.innerHTML = ''
@@ -112,11 +207,12 @@ export class Words {
 
     const wordControls = document.createElement('div')
     wordControls.classList.add('word-controls')
-    const controlsHtml = `
+    const deleteButton = `<button class="word-control delete-word">Удалить из сложных</button>`
+    const buttons = `
       <button class="word-control hard-word">Добавить в сложные</button>
-      <button class="word-control remove-word">Удалить</button>
       <button class="word-control learned-word">Отметить как изученное</button>
     `
+    const controlsHtml = `${!user ? '': isHardWords ? deleteButton : buttons}`
     wordControls.innerHTML = controlsHtml
     sideBar.append(wordControls)
 
@@ -148,31 +244,124 @@ export class Words {
     `
     ingameStatistic.innerHTML = ingameStatisticHtml
     sideBar.append(ingameStatistic)
-  }
 
+    if(!isHardWords){
+      const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
+      this.hardWordHandler(hardWord, user,  word)
 
-
-}
-
-function audioPlayback(word: IWord, url: string): HTMLAudioElement{
-    
-  const sources = [word.audio, word.audioExample, word.audioMeaning]
-  let current = 0;
-
-  const audio: HTMLAudioElement = document.createElement('audio')
-  audio.setAttribute('controls', '')
-  audio.src = `${url}${sources[current]}`
-  audio.onended = function(){
-    current++;
-    if (current >= sources.length) {
-      current = 0
-      audio.src = `${url}${sources[current]}`
-      return null
+      const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
+      this.learnedWordHandler(learnedWord, user,  word)
     }
-    audio.src = `${url}${sources[current]}`;
-    audio.play();
+    else{
+      const deleteWord: HTMLButtonElement = document.querySelector('.delete-word')
+      this.deleteWordHandler(deleteWord, user, word)
+    }
   }
 
-  return audio
+  renderLinks(user: SignIn){
+    const gameLinks = document.querySelector('.game-links')
+    gameLinks.innerHTML = ''
+
+    const game1 = 'Audio Call'
+    const game2 = 'Sprint'
+
+    const audioCall = document.createElement('div')
+    audioCall.innerHTML = gameLink(game1)
+    audioCall.classList.add('audio-call')
+
+    const sprint = document.createElement('div')
+    sprint.innerHTML = gameLink(game2)
+    sprint.classList.add('sprint')
+
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+
+    this.gameLinkHandler(audioCallButton, user)
+    this.gameLinkHandler(sprintButton, user)
+
+    gameLinks.append(audioCall, sprint)
+  }
+
+  hardWordHandler(toHardWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
+    toHardWordsButton.addEventListener('click', async () => {
+      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id) // Создаю новое пользовательское слово 
+      if(!response) {
+        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'hard', word)
+        this.render(this.currentLevel, this.currentPage)
+      }
+    })
+  }
+
+  learnedWordHandler(toLearnedWordsButton: HTMLButtonElement, user: SignIn,  word: IWord){
+    toLearnedWordsButton.addEventListener('click', async () => {
+      const response = await this.apiUsersWords.getUserWordById(user.token, user.userId, word.id)
+      if(!response) {
+        await this.apiUsersWords.createUserWord(user.token, user.userId, word.id, 'learned', word) // Создаю новое пользовательское слово
+        this.render(this.currentLevel, this.currentPage)
+      }
+      else{
+        await this.apiUsersWords.updateUserWord(user.token, user.userId, word.id, 'learned', word) // Обновляю пользовательское слово если пришёл ответ
+        this.render(this.currentLevel, this.currentPage)
+      }
+    })
+  }
+  
+  deleteWordHandler(deleteWordsButton: HTMLButtonElement, user: SignIn, word: IWord){
+    deleteWordsButton.addEventListener('click', async () => {
+      await this.apiUsersWords.deleteUserWord(user.token, user.userId, word.id) // Удаляю слово без проверки потому что кнопка на 
+      this.hardWordsRender()                                                    // которой слушатель есть только у слов которые есть у пользователя
+    })
+  }
+
+  gameLinkHandler(gameLink: HTMLButtonElement, user: SignIn){
+    gameLink.addEventListener('click', async () => {
+      const userWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'learned')
+      const learnedWordsArray = userWords.map(a => a.optional) as IWord[]
+      const wordsArray: IWord[] = []
+
+      for(let i = 0; i <= Number(this.currentPage); i++){
+        const pageWords = await this.getWordsPage(this.currentLevel, i.toString())
+        const passedWords = this.resultingByIdArray(learnedWordsArray, pageWords, false)
+        wordsArray.push(...passedWords)
+      }
+      localStorage.wordsForGames = JSON.stringify(wordsArray)
+    })
+  }
+
+  isPageComplete(){
+    const cardWrapper = document.querySelector('.card-wrapper')
+    const hardCards = document.querySelectorAll('.hard')
+    const learnedCards = document.querySelectorAll('.learned')
+    if(hardCards.length + learnedCards.length === 20) {
+      cardWrapper.classList.add('completed')
+    }
+    else cardWrapper.classList.remove('completed')
+  }
+
+  isPageLearned(){
+    const cardWrapper = document.querySelector('.card-wrapper')
+
+    const learnedCards = document.querySelectorAll('.learned')
+
+    const audioCall = document.querySelector('.audio-call')
+    const sprint = document.querySelector('.sprint')
+
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+    if(learnedCards.length === 20) {
+      audioCallButton.disabled = true
+      sprintButton.disabled = true
+      cardWrapper.classList.add('page-learned')
+    }
+    else {
+      audioCallButton.disabled = false
+      sprintButton.disabled = false
+      cardWrapper.classList.remove('page-learned')
+    }
+  }
 }
+
+
+
+
 

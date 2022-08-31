@@ -70,7 +70,7 @@ class ApiUsersWords{
         console.log(`Access token is missing or invalid`): console.log(`ошибка ${data.status}`));
         return UserWord;
     }
-    deleteUser(token, userId, wordId){
+    deleteUserWord(token, userId, wordId){
         const Url= `${this.url}${userId}/words/${wordId}`;
         const DeletedUser = fetch(Url, {
             method: 'DELETE',
