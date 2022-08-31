@@ -52,7 +52,7 @@ class Sprint{
           })
       }
     getChunkOfWords(){
-        this.wordsA1=[];
+        this.wordsA1=[]; 
         this.wordsA2=[];
         this.wordsB1=[];
         this.wordsB2=[];

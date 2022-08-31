@@ -73,16 +73,32 @@ select {
     scroll-behavior: auto !important;
   }
 }
-// .audioChalenge,
-.sprint{
-  display: none;
-}
-.audioChalenge,
-.sprint{
+
+.audioChalenge{
   position: absolute;
   width: 100%;
   height: 100vh;
   color: white;
+}
+.startGameTextbook{
+  margin-top: 15px;
+  z-index: 2;
+  border-radius: 15px;
+  padding: 5px 15px;
+  background-color: transparent ;
+  border: solid 2px white;
+  color: white;
+}
+
+.startPageForTextbook{
+display: flex;
+flex-direction: column;
+align-items: center;
+margin-top: 50px;
+}
+.startGameTextbook:hover{
+  box-shadow: 0 0 10px 0 white inset, 0 0 10px 4px white;
+  cursor: pointer;
 }
 
 

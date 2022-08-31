@@ -1,10 +1,15 @@
+import FinalPage from '../finalPage/finalPage';
 class GameProcess{
     interval: any;
     counter: number;
     resultArray: any[];
     animationResult: HTMLBodyElement;
     arrForFinalPage: any[];
+    words: any[];
+    finalPage: FinalPage;
     constructor(){
+        this.finalPage= new FinalPage();
+        this.words=[]
         this.counter = -1;
         this.interval;
         this.resultArray=[];
@@ -12,6 +17,7 @@ class GameProcess{
         this.arrForFinalPage=[];
     }
     showFirstPage(arr){
+        this.words=arr;
         if (arr.length!==0){
         const buttonStart=document.querySelector('.startAudioChalengeGame')
         const clone = buttonStart.cloneNode(true) as Element;
@@ -26,7 +32,7 @@ class GameProcess{
             this.interval = window.setInterval(this.timer.bind(this), 1000);
             this.fillGamePage(arr,'start')
             this.resultArray.pop()
-        })
+        }) 
         wrongButton.addEventListener('click',()=>{
             this.fillGamePage(arr,false)
         })
@@ -74,6 +80,8 @@ class GameProcess{
     }
     stopGame(){
         clearInterval(this.interval)
+        const pointsForGame=document.querySelector('.pointsSprint').innerHTML.slice(26, document.querySelector('.pointsSprint').innerHTML.length);
+        this.finalPage.showFinalPage(this.words,this.arrForFinalPage,pointsForGame)
     }
     rightWord(){
         this.arrForFinalPage.push(true)
