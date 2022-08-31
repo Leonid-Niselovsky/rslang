@@ -62,6 +62,8 @@ export class Words {
     pagination.style.display = 'block'
     console.log(localStorage)
     const user = await this.getSignInUser()
+    // const user = localStorage.user
+    // console.log(localStorage)
     // console.log(level, page)
     const wordsArray = await this.getWordsPage(level, page)
     this.currentLevel = level
