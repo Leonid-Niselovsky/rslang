@@ -60,11 +60,10 @@ export class Words {
   async render(level: string, page: string){
     const pagination: HTMLElement = document.querySelector('.pagination')
     pagination.style.display = 'block'
+    // const user = await this.getSignInUser()
+    const user = JSON.parse(localStorage.user)
     console.log(localStorage)
-    const user = await this.getSignInUser()
-    // const user = localStorage.user
-    // console.log(localStorage)
-    // console.log(level, page)
+    console.log(level, page, user)
     const wordsArray = await this.getWordsPage(level, page)
     this.currentLevel = level
     this.currentPage = page

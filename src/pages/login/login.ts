@@ -56,9 +56,11 @@ formSignUp.addEventListener('submit', async (e) => {
 
   const loginAfterReg = await signIn.signIn(contentEmail, contentPass);
 
-  for (let key in loginAfterReg) {
-    localStorage.setItem(key, loginAfterReg[key]);
-  }
+  // for (let key in loginAfterReg) {
+  //   localStorage.setItem(key, loginAfterReg[key]);
+  // }
+
+  localStorage.setItem('user', JSON.stringify(login))
 
   redirect('./index.html');
 });
@@ -78,9 +80,11 @@ formSignIn.addEventListener('submit', async (e) => {
 
   let getTokenId = await signup.getUser(login.token, login.userId);
 
-  for (let key in login) {
-    localStorage.setItem(key, login[key]);
-  }
+  // for (let key in login) {
+  //   localStorage.setItem(key, login[key]);
+  // }
+
+  localStorage.setItem('user', JSON.stringify(login))
 
   redirect('./index.html');
 });
