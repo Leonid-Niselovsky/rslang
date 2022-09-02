@@ -135,7 +135,7 @@ export class Words {
   async hardWordsRender(){
     const pagination: HTMLElement = document.querySelector('.pagination')
     pagination.style.display = 'none'
-    const user = await this.getSignInUser()
+    const user = JSON.parse(localStorage.user)
     const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
     const hardWordsArray = allUserWords.filter(a => {
       if(a.difficulty === 'hard') return true

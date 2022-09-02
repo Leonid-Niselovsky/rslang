@@ -7,47 +7,85 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="difficulty-level">
-        <button class="level level-A1">
-            <h3 class="level-title">A1</h3>
-            <span class="word-gap">1-600</span>
-        </button>
-        <button class="level level-A2">
-            <h3 class="level-title">A2</h3>
-            <span class="word-gap">601-1200</span>
-        </button>
-        <button class="level level-B1">
-            <h3 class="level-title">B1</h3>
-            <span class="word-gap">1201-1800</span>
-        </button>
-        <button class="level level-B2">
-            <h3 class="level-title">B2</h3>
-            <span class="word-gap">1801-2400</span>
-        </button>
-        <button class="level level-C1">
-            <h3 class="level-title">C1</h3>
-            <span class="word-gap">2401-3000</span>
-        </button>
-        <button class="level level-C2">
-            <h3 class="level-title">C2</h3>
-            <span class="word-gap">3001-3600</span>
-        </button>
-        <button class="hard-words">
-            <h3 class="level-title">Сложные слова</h3>
-        </button>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <img src="../../assets/img/logo.png" alt="logo">
+                <a href="./index.html" class="link_nav link_logo">English_pal</a>
+            </div>
+            <nav class="nav">
+                <ul class="ul_nav" id="menu">
+                <li class="li_nav">
+                    <a href="./dictionary.html" class="link_nav link_nav_reg"
+                    >Textbook</a
+                    >
+                </li>
+                <li class="li_nav">
+                    <a href="./games.html" class="link_nav link_nav_reg"
+                    >Game "Audio Call"</a
+                    >
+                </li>
+                <li class="li_nav">
+                    <a href="./games.html" class="link_nav link_nav_reg"
+                    >Game "Sprint"</a
+                    >
+                </li>
+                <li class="li_nav">
+                    <a href="./statistics.html" class="link_nav link_nav_reg"
+                    >Statistics</a
+                    >
+                </li>
+                </ul>
+            </nav>
+        </header>
     </div>
 
-    <div class="textbook">
-        <div class="card-wrapper"></div>
-        <div class="side-bar"></div>
-    </div>
+    <main class="main">
+        <div class="container">
+            <h1 class="title">Слова</h1>
+            <div class="difficulty-level">
+                <button class="level level-A1">
+                    <h3 class="level-title">A1</h3>
+                    <!-- <span class="word-gap">1-600</span> -->
+                </button>
+                <button class="level level-A2">
+                    <h3 class="level-title">A2</h3>
+                    <!-- <span class="word-gap">601-1200</span> -->
+                </button>
+                <button class="level level-B1">
+                    <h3 class="level-title">B1</h3>
+                    <!-- <span class="word-gap">1201-1800</span> -->
+                </button>
+                <button class="level level-B2">
+                    <h3 class="level-title">B2</h3>
+                    <!-- <span class="word-gap">1801-2400</span> -->
+                </button>
+                <button class="level level-C1">
+                    <h3 class="level-title">C1</h3>
+                    <!-- <span class="word-gap">2401-3000</span> -->
+                </button>
+                <button class="level level-C2">
+                    <h3 class="level-title">C2</h3>
+                    <!-- <span class="word-gap">3001-3600</span> -->
+                </button>
+                <button class="hard-words">
+                    <h3 class="level-title">Сложные слова</h3>
+                </button>
+            </div>
 
-    <div class="pagination">
-        <button class="pagination-button prev"> <- </button>
-        <span class="current-page">1</span>
-        <button class="pagination-button next"> -> </button>
-    </div>
+            <div class="textbook">
+                <div class="card-wrapper"></div>
+                <div class="side-bar"></div>
+            </div>
 
-    <div class="game-links"></div>
+            <div class="pagination">
+                <button class="pagination-button prev"> <- </button>
+                <span class="current-page">1</span>
+                <button class="pagination-button next"> -> </button>
+            </div>
+
+            <div class="game-links"></div>
+        </div>
+    </main>
 </body>
 </html>

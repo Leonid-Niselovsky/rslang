@@ -9,6 +9,70 @@
   }
 }
 
+body{
+  margin: 0;
+  font-family: 'Raleway';
+}
+
+.container{
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+//HEADER
+
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 28px;
+  
+    .logo{
+      display: inherit;
+      align-items: center;
+
+      .link_logo{
+        text-decoration: none;
+        font-size: 12px;
+        line-height: 14px;
+        color:#1C8EE1;
+        padding-left: 8px;
+      }
+    }
+
+    .ul_nav{
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding-left: 169px;
+      gap: 64px;
+
+      .link_nav{
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 16px;
+        color: #64686C;
+      }
+    }
+}
+
+// MAIN
+
+.title{
+  margin: 40px 0 0 0 ;
+  font-family: 'Raleway';
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 130%;
+
+  color: #02121C;
+
+}
+
+.difficulty-level{
+  display: flex;
+}
+
 .textbook{
   display: flex;
 }
