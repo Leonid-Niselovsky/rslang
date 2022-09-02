@@ -1,6 +1,8 @@
 import './main.scss';
+import LearnedWords from '../learnedWords/learnedWords';
 import ApiWords from '../../../api/apiWords';
 class AudioChalenge{
+  learnedWord: LearnedWords;
     apiWords: ApiWords;
     pagesLength: number;
     words: any[];
@@ -10,6 +12,7 @@ class AudioChalenge{
     rightWordButton: any;
     resultArray: boolean[];
     constructor(){
+      this.learnedWord = new LearnedWords();
       this.pagesLength=29;
       this.apiWords = new ApiWords;
       this.words=[];
@@ -86,6 +89,27 @@ class AudioChalenge{
             })
         }
     })
+}
+private getChunkOfWordsTextbook(){
+  const lklStrg=JSON.parse(localStorage.wordsForGames)
+    this.words=lklStrg.slice(lklStrg.length-10,lklStrg.length)
+}
+addStartTextbook(){
+  this.getChunkOfWordsTextbook()
+  const butnStart= document.querySelector('.startGameTextbook');
+  const startPage = document.querySelector('.startPageForTextbook');
+  const gamePage = document.querySelector('.gameAudioChalenge');
+  butnStart.addEventListener('click',()=>{
+      if(this.words.length===10){
+          startPage.classList.add('displayNoneForGame')
+          gamePage.classList.remove('displayNoneForGame')
+          this.counter=0;
+          this.fillGamePage(this.counter);
+          window.addEventListener('keyup', (e)=>{
+            this.keyboardEvent(e)
+          })
+      }
+  })
 }
  keyboardEvent(e){
   const Word=this.words[this.counter];
@@ -286,10 +310,12 @@ class AudioChalenge{
       const result = this.resultArray[i]
       const word = this.words[i]
       if (result){
+        this.learnedWord.addWord(word)
         rightWords.insertAdjacentHTML('beforeend', this.fillFinalPage(word.word, word.wordTranslate));
         const soundButton = rightWords.children[rightWords.children.length -1 ].children[0];
         soundButton.addEventListener('click',()=>this.playAudioFinal(this.url + word.audio))
       }else{
+        this.learnedWord.deleteWord(word)
         wrongWords.insertAdjacentHTML('beforeend', this.fillFinalPage(word.word, word.wordTranslate));
         const soundButton = wrongWords.children[wrongWords.children.length -1 ].children[0];
         soundButton.addEventListener('click',()=>this.playAudioFinal(this.url + word.audio))

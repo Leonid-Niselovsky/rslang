@@ -154,7 +154,8 @@ class Sprint{
             'wordTranslate':wordTanslate,
             'guessWord':wordGuess,
             'audio':wordAudio,
-            'result':wordTanslate===wordGuess
+            'result':wordTanslate===wordGuess,
+            'wordForServer':arr[i]
         }
         resultArray.push(result)
     }

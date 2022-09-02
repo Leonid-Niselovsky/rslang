@@ -258,7 +258,8 @@ class GameProcess{
                   'wordTranslate':wordTanslate,
                   'guessWord':wordGuess,
                   'audio':wordAudio,
-                  'result':wordTanslate===wordGuess
+                  'result':wordTanslate===wordGuess,
+                  'wordForServer':arrPages[i]
               }
               arr.push(result)
           }    

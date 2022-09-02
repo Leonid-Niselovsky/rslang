@@ -1,7 +1,11 @@
+import LearnedWords from '../../learnedWords/learnedWords';
 class FinalPage{
     url: string
+    learnedWord: LearnedWords;
     constructor(){
         this.url='https://learnwords124.herokuapp.com/'
+        this.learnedWord = new LearnedWords();
+        
     }
     showFinalPage(words, result,points){
         const finalPage=document.querySelector('.finalPage') as Element;
@@ -20,10 +24,12 @@ class FinalPage{
           const resultGame = result[i]
           const word = words[i]
           if (resultGame){
+            this.learnedWord.addWord(word.wordForServer)
             rightWords.insertAdjacentHTML('beforeend', this.fillFinalPage(word.word, word.wordTranslate));
             const soundButton = rightWords.children[rightWords.children.length -1 ].children[0];
             soundButton.addEventListener('click',()=>this.playAudioFinal(this.url + word.audio))
           }else{
+            this.learnedWord.deleteWord(word.wordForServer)
             wrongWords.insertAdjacentHTML('beforeend', this.fillFinalPage(word.word, word.wordTranslate));
             const soundButton = wrongWords.children[wrongWords.children.length -1 ].children[0];
             soundButton.addEventListener('click',()=>this.playAudioFinal(this.url + word.audio))

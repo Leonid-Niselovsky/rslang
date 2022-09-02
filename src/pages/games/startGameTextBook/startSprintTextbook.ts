@@ -26,7 +26,7 @@ class StartSprintTextbook{
         }
         return group
     }
-    renderArrayForGame(){
+    renderArrayForGame(){ 
         const arr=[];
         const arrPages=JSON.parse(localStorage.wordsForGames)
         for(let i=0;i<this.guessWordArrayTextbook.length;i++){
