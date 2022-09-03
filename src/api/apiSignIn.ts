@@ -9,7 +9,7 @@ class ApiSignIn{
           "email": `${email}`,
           "password": `${password}`
         }
-      const Token: Promise<SignIn> = fetch(this.url, {
+      const Token= fetch(this.url, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -17,8 +17,8 @@ class ApiSignIn{
         },
         body: JSON.stringify(Json)
       })
-      .then((data) => data.status===200 ? data.json(): data.status===403 ? 
-        console.log(`Incorrect e-mail or password`): console.log(`ошибка ${data.status}`));
+      // .then((data) => data.status===200 ? data.json(): data.status===403 ? 
+      //   console.log(`Incorrect e-mail or password`): console.log(`ошибка ${data.status}`));
       return Token;
     }
 }

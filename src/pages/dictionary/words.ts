@@ -61,7 +61,8 @@ export class Words {
     const pagination: HTMLElement = document.querySelector('.pagination')
     pagination.style.display = 'block'
     console.log(localStorage)
-    const user = await this.getSignInUser()
+    // const user = await this.getSignInUser()
+    const user = JSON.parse(localStorage.user)
     // const user = localStorage.user
     // console.log(localStorage)
     // console.log(level, page)
@@ -136,7 +137,8 @@ export class Words {
   async hardWordsRender(){
     const pagination: HTMLElement = document.querySelector('.pagination')
     pagination.style.display = 'none'
-    const user = await this.getSignInUser()
+    // const user = await this.getSignInUser()
+    const user = JSON.parse(localStorage.user)
     const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
     const hardWordsArray = allUserWords.filter(a => {
       if(a.difficulty === 'hard') return true

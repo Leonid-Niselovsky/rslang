@@ -18,8 +18,8 @@ class ApiUsers{
         },
         body: JSON.stringify(Json)
       })
-      .then((data) => data.status===200 ? data.json(): data.status===422 ? 
-      console.log(`Incorrect e-mail or password`): console.log(`ошибка ${data.status}`));
+      // .then((data) => data.status===200 ? data.json(): data.status===422 ? 
+      // console.log(`Incorrect e-mail or password`): console.log(`ошибка ${data.status}`));
       return createdUser;
     }
     getUser(token, id) {
