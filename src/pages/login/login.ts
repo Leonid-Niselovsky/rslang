@@ -7,6 +7,7 @@ const signInBtn = document.querySelector('.signin_btn') as HTMLBodyElement;
 const signUpBtn = document.querySelector('.signup_btn') as HTMLBodyElement;
 const form = document.querySelector('.form') as HTMLBodyElement;
 const body = document.body;
+const incorrectReg = document.querySelector('.error-registration') as HTMLParagraphElement;
 
 signUpBtn.addEventListener('click', function () {
   form.classList.add('active');
@@ -38,11 +39,15 @@ formSignUp.addEventListener('submit', async (e) => {
 
   // валидность email и pass, если false то розовый цвет и фокус 
   if(!validationEmail.test(email.value)) {
+    incorrectReg.style.display = 'block';
+    incorrectReg.innerText = 'incorrect email';
     email.style.backgroundColor = 'pink';
     email.focus();
     return;
   }
   if(!validationPass.test(password.value)) {
+    incorrectReg.style.display = 'block';
+    incorrectReg.innerText = 'incorrect password';
     password.style.backgroundColor = 'pink';
     password.focus();
     return;
@@ -52,42 +57,55 @@ formSignUp.addEventListener('submit', async (e) => {
   const contentEmail = email.value;
   const contentPass = password.value;
 
-  const createUser = await signup.createUser(contentLogin, contentEmail, contentPass);
-
   const loginAfterReg = await signIn.signIn(contentEmail, contentPass);
-
-  for (let key in loginAfterReg) {
-    localStorage.setItem(key, loginAfterReg[key]);
-  }
-
-  redirect('./index.html');
+  const createUser = await signup.createUser(contentLogin, contentEmail, contentPass).then((response) => {
+    console.log(response);
+    if(response.status === 200) {
+      localStorage.setItem('user', JSON.stringify(login));
+      redirect('./index.html');
+    } else if(response.status === 417) {
+      incorrectReg.style.display = 'block';
+      incorrectReg.innerText = 'email is already registered';
+    } else {
+      incorrectReg.style.display = 'block';
+    }
+  });
 });
 
 // LoginIn
 const formSignIn = document.querySelector('.form-wrapper_signin') as HTMLInputElement;
 const emailSignIn = document.querySelector('.signin-email') as HTMLInputElement;
 const passwordSignIn = document.querySelector('.signin-pass') as HTMLInputElement;
+const incorrect = document.querySelector('.error-registr') as HTMLParagraphElement;
 
 formSignIn.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const textSignInEmail = emailSignIn.value;
   const textSignInPass = passwordSignIn.value;
+  // email qwerty@qwerty.ru
+  // pass 123456789
 
-  const login = await signIn.signIn(textSignInEmail, textSignInPass);
-
-  let getTokenId = await signup.getUser(login.token, login.userId);
-
-  for (let key in login) {
-    localStorage.setItem(key, login[key]);
-  }
-
-  redirect('./index.html');
+  const login = await signIn.signIn(textSignInEmail, textSignInPass).then((response) => {
+    if(response.status === 200) {
+      localStorage.setItem('user', JSON.stringify(response));
+      redirect('./index.html');
+    } else if(response.status === 403) {
+        incorrect.style.display = 'block';
+        emailSignIn.style.backgroundColor = 'pink';
+        passwordSignIn.style.backgroundColor = 'pink';
+      } else {
+        incorrect.style.display = 'block';
+        incorrect.innerText = 'you\'re not registred';
+        emailSignIn.style.backgroundColor = 'pink';
+        passwordSignIn.style.backgroundColor = 'pink';
+      }
+  });
 });
 
 // test user
 // login qwerty 
-// email qwerty@qwerty.ru 
+// email qwerty@qwerty.ru
 // pass 123456789
 // message: "Authenticated"
 // name: "qwerty"

@@ -36,5 +36,6 @@ export interface SignIn{
     "token": string,
     "refreshToken"?: string,
     "userId": string,
-    "name"?: string
+    "name"?: string,
+    "status"?: number
 }
