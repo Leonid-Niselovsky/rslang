@@ -185,8 +185,6 @@ export class Words {
   }
 
 
-
-
   
   renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')

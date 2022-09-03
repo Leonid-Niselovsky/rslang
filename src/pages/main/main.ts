@@ -25,7 +25,7 @@ const logout = document.querySelector('.login-text') as HTMLSpanElement;
 const loginButton = document.querySelector('.link_reg') as HTMLLinkElement;
 
 
-if(localStorage.getItem('name')) {
+if(localStorage.getItem('user')) {
   logout.innerText = 'Logout';
   loginButton.href = './index.html';
 }
