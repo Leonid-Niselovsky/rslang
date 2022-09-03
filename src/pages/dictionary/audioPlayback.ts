@@ -6,7 +6,7 @@ export function audioPlayback(word: IWord, url: string){
   const playButton = document.createElement('button')
   playButton.classList.add('play-button')
   playButton.innerHTML = `
-    <img src="../../assets/img/play.png">
+    <img src="assets/img/play.png">
   `
   const sources = [word.audio, word.audioExample, word.audioMeaning]
   let current = 0;
