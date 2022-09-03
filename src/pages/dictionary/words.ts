@@ -1,11 +1,6 @@
 import ApiWords from '../../api/apiWords'
 import {UserWords, Words as IWord} from './../../api/interface'
-// import { Word } from './word'
-import {accordance} from './dictionary'
-import ApiUsers from '../../api/apiUsers'
 import ApiUsersWords from '../../api/apiUsersWords'
-import ApiUsersSettings from '../../api/apiUsersSettings'
-import ApiSignIn from '../../api/apiSignIn'
 import {SignIn} from '../../api/interface'
 import {gameLink} from '../dictionary/gameLink'
 import {audioPlayback} from '../dictionary/audioPlayback'
@@ -18,7 +13,7 @@ export class Words {
   private apiWords: ApiWords
   private _currentLevel: string
   private _currentPage: string
-  private apiSignIn: ApiSignIn
+  // private apiSignIn: ApiSignIn
   private apiUsersWords: ApiUsersWords
   startGame: StartGame
 
@@ -41,16 +36,16 @@ export class Words {
   constructor() {
     if(!instance) instance = this
     this.apiWords = new ApiWords()
-    this.apiSignIn = new ApiSignIn()
+    // this.apiSignIn = new ApiSignIn()
     this.apiUsersWords = new ApiUsersWords()
     this.startGame = new StartGame()
     return instance
   }
 
-  async getSignInUser(){
-    const user = await this.apiSignIn.signIn("pasha3@gmail.com", 'pasha11234')
-    return user
-  }
+  // async getSignInUser(){
+  //   const user = await this.apiSignIn.signIn("pasha3@gmail.com", 'pasha11234')
+  //   return user
+  // }
 
   
   async getWordsPage(level: string, page: string){
@@ -61,21 +56,66 @@ export class Words {
 
 
   async render(level: string, page: string){
+    const difficultyLevel = document.querySelector(`.level-${localStorage.level}`)
+
+    if(difficultyLevel) difficultyLevel.classList.add('active')
+
     const pagination: HTMLElement = document.querySelector('.pagination')
-    pagination.style.display = 'block'
+    const hardWords: HTMLElement = document.querySelector('.level-hard-words')
+    pagination.style.display = 'flex'
+
+    let user: SignIn
+    if(localStorage.user) {  
+      user = JSON.parse(localStorage.user)
+      console.log('user:', user)
+    }
+    else{
+      user = null
+    }
+    if(user){
+      hardWords.style.display = 'inline-block'
+    }
+    else{
+      hardWords.style.display = 'none'
+    }
     console.log(localStorage)
-    // const user = await this.getSignInUser()
-    const user = JSON.parse(localStorage.user)
-    // const user = localStorage.user
-    // console.log(localStorage)
-    // console.log(level, page)
+    console.log(level, page, user)
     const wordsArray = await this.getWordsPage(level, page)
     this.currentLevel = level
     this.currentPage = page
     console.log(this.currentPage)
     this.renderLinks(user)
-    this.addStyles(user, wordsArray)
+    if(user){
+      this.addStyles(user, wordsArray)
+    }
     this.renderCardButton(wordsArray, user, false)
+  }
+
+
+  async hardWordsRender(){
+    const difficultyLevel = document.querySelector(`.level-${localStorage.level}`)
+
+    if(difficultyLevel) difficultyLevel.classList.add('active')
+
+    const pagination: HTMLElement = document.querySelector('.pagination')
+    pagination.style.display = 'none'
+    let user: SignIn
+    if(localStorage.user) {  
+      user = JSON.parse(localStorage.user)
+    }
+    else{
+      user = null
+    }
+    const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
+    const hardWordsArray = allUserWords.filter(a => {
+      if(a.difficulty === 'hard') return true
+      return false
+    })
+    const wordsArray = hardWordsArray.map(a => {
+      return a.optional
+    }) as IWord[]
+    console.log(wordsArray)
+    this.renderCardButton(wordsArray, user, true)
   }
 
   async addStyles(user: SignIn, wordsArray: IWord[]){
@@ -101,6 +141,15 @@ export class Words {
 
     this.isPageComplete()
     this.isPageLearned()
+  }
+
+  highlightButton(button: HTMLElement){
+    const allButtons = document.querySelectorAll('.card-word')
+    allButtons.forEach((a) => {
+      a.classList.remove(`active-${localStorage.level}`, 'active')
+    })
+    button.classList.add(`active-${localStorage.level}`, 'active')
+    console.log(button)
   }
 
   resultingByIdArray(userWords: IWord[], wordsArray: IWord[], include: boolean){
@@ -136,24 +185,6 @@ export class Words {
   }
 
 
-
-  async hardWordsRender(){
-    const pagination: HTMLElement = document.querySelector('.pagination')
-    pagination.style.display = 'none'
-    // const user = await this.getSignInUser()
-    const user = JSON.parse(localStorage.user)
-    const allUserWords = await this.apiUsersWords.getAllUserWords(user.token, user.userId)
-    const hardWordsArray = allUserWords.filter(a => {
-      if(a.difficulty === 'hard') return true
-      return false
-    })
-    const wordsArray = hardWordsArray.map(a => {
-      return a.optional
-    }) as IWord[]
-    console.log(wordsArray)
-    this.renderCardButton(wordsArray, user, true)
-  }
-
   
   renderCardButton(words: IWord[], user: SignIn, isHardWords: boolean){
     const cardWrapper: HTMLElement = document.querySelector('.card-wrapper')
@@ -182,11 +213,17 @@ export class Words {
     span.classList.add('card-word-translate')
     span.textContent = word.wordTranslate
 
-    button.addEventListener('click', () => this.renderSideBar(word, user, isHardWords))
+    button.addEventListener('click', () => {
+      this.renderSideBar(word, user, isHardWords)
+      this.highlightButton(button)
+    })
     button.append(h4, span)
 
-    this.isPageComplete()
-    this.isPageLearned()
+    if(localStorage.level !== 'hard-words'){
+      this.isPageComplete()
+      this.isPageLearned()
+    }
+
     return button
   }
 
@@ -194,28 +231,33 @@ export class Words {
   renderSideBar(word: IWord, user: SignIn, isHardWords: boolean,){
     const url = 'https://learnwords124.herokuapp.com/'
     const sideBar: HTMLElement = document.querySelector('.side-bar')
+    const audio = audioPlayback(word, url)
     sideBar.innerHTML = ''
+    sideBar.append(audio)
     const html = `
       <img class="word-img" src="${url}${word.image}">
       <div class="word-overview">    
-        <h3 class="word-title">${word.word}</h3>
+        <div class="full-word">   
+          <span class="word-transcription">${word.transcription}</span>
+          <h3 class="word-title">${word.word}</h3>
+        </div>  
         <h4 class="word-subtitle">${word.wordTranslate}</h4>
-        <span class="word-transcription">${word.transcription}</span>
       </div>
     `
     sideBar.innerHTML = html
+    const fullWord = document.querySelector('.full-word')
+    fullWord.append(audio)
 
-    const overview = document.querySelector('.word-overview')
+    // const overview = document.querySelector('.word-overview')
 
-    const audio = audioPlayback(word, url)
-    overview.append(audio)
+    // overview.append(audio)
 
     const wordControls = document.createElement('div')
     wordControls.classList.add('word-controls')
     const deleteButton = `<button class="word-control delete-word">Удалить из сложных</button>`
     const buttons = `
-      <button class="word-control hard-word">Добавить в сложные</button>
-      <button class="word-control learned-word">Отметить как изученное</button>
+      <button class="word-control hard-word">+ В сложные слова</button>
+      <button class="word-control learned-word">+ В изученные слова</button>
     `
     const controlsHtml = `${!user ? '': isHardWords ? deleteButton : buttons}`
     wordControls.innerHTML = controlsHtml
@@ -224,40 +266,42 @@ export class Words {
     const wordDescription = document.createElement('div')
     wordDescription.classList.add('word-description')
     const wordDescriptionHtml = ` 
-        <h2">Значение</h2>
+        <h2>Значение</h2>
         <div class="word-meaning">${word.textMeaning}</div>
         <div class="word-meaning-translate">${word.textMeaningTranslate}</div>
         <h2>Пример</h2>
         <div class="word-example">${word.textExample}</div>
-        <div class="word-meaning-translate">${word.textExampleTranslate}</div>
+        <div class="word-example-translate">${word.textExampleTranslate}</div>
     `
     wordDescription.innerHTML = wordDescriptionHtml
     sideBar.append(wordDescription)
 
     const ingameStatistic = document.createElement('div')
-    ingameStatistic.classList.add('ingame-statistic')
+    ingameStatistic.classList.add('ingame-statistics')
     const ingameStatisticHtml = `
-      <h2>Правильных ответов в играх</h2>
-      <div class="ingame-statistic">
-        <span class="game-name">Аудиовызов</span>
-        <span class="game-statistic">0/0</span>
-      </div>
-      <div class="ingame-statistic">
-        <span class="game-name">Спринт</span>
-        <span class="game-statistic">0/0</span>
+      <h2>Ответы в играх</h2>
+      <div class="ingame">
+        <div class="ingame-statistic">
+          <span class="game-name">Аудиовызов</span>
+          <span class="game-statistic">0</span>
+        </div>
+        <div class="ingame-statistic">
+          <span class="game-name">Спринт</span>
+          <span class="game-statistic">0</span>
+        </div>
       </div>
     `
     ingameStatistic.innerHTML = ingameStatisticHtml
     sideBar.append(ingameStatistic)
 
-    if(!isHardWords){
+    if(!isHardWords && user){
       const hardWord: HTMLButtonElement = document.querySelector('.hard-word')
       this.hardWordHandler(hardWord, user,  word)
 
       const learnedWord: HTMLButtonElement = document.querySelector('.learned-word')
       this.learnedWordHandler(learnedWord, user,  word)
     }
-    else{
+    else if(user){
       const deleteWord: HTMLButtonElement = document.querySelector('.delete-word')
       this.deleteWordHandler(deleteWord, user, word)
     }
@@ -278,8 +322,8 @@ export class Words {
     sprint.innerHTML = gameLink(game2)
     sprint.classList.add('sprint')
 
-    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
-    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link')
 
     this.gameLinkHandler(audioCallButton, user)
     this.gameLinkHandler(sprintButton, user)
@@ -336,12 +380,17 @@ export class Words {
 
   isPageComplete(){
     const cardWrapper = document.querySelector('.card-wrapper')
+    const pageIndicator = document.querySelector('.current-page')
     const hardCards = document.querySelectorAll('.hard')
     const learnedCards = document.querySelectorAll('.learned')
     if(hardCards.length + learnedCards.length === 20) {
       cardWrapper.classList.add('completed')
+      pageIndicator.classList.add('completed')
     }
-    else cardWrapper.classList.remove('completed')
+    else {
+      cardWrapper.classList.remove('completed')
+      pageIndicator.classList.remove('completed')
+    }
   }
 
   isPageLearned(){
@@ -352,8 +401,8 @@ export class Words {
     const audioCall = document.querySelector('.audio-call')
     const sprint = document.querySelector('.sprint')
 
-    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link-button')
-    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link-button')
+    const audioCallButton: HTMLButtonElement = audioCall.querySelector('.game-link')
+    const sprintButton: HTMLButtonElement = sprint.querySelector('.game-link')
     if(learnedCards.length === 20) {
       audioCallButton.disabled = true
       sprintButton.disabled = true

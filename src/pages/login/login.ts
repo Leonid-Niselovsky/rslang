@@ -86,6 +86,7 @@ formSignIn.addEventListener('submit', async (e) => {
   // email qwerty@qwerty.ru
   // pass 123456789
 
+
   const login = await signIn.signIn(textSignInEmail, textSignInPass).then((response) => {
     if(response.status === 200) {
       localStorage.setItem('user', JSON.stringify(response));
@@ -101,6 +102,7 @@ formSignIn.addEventListener('submit', async (e) => {
         passwordSignIn.style.backgroundColor = 'pink';
       }
   });
+
 });
 
 // test user

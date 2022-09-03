@@ -1,7 +1,8 @@
 export function gameLink(title: string){
   return `
-    <button class="game-link-button">
-      <a class="game-link">${title}</a>
-    </button>
+      <a class="game-link" href="${title.toLowerCase() !== 'sprint' ? './games.html' : './sprint.html'}">
+        <h3 class="game-link-title">${title}</h3>
+        <img src="../../assets/img/${title.split(' ').join('').toLowerCase()}.png">
+      </a>
   `
 }
