@@ -57,20 +57,20 @@ formSignUp.addEventListener('submit', async (e) => {
   const contentEmail = email.value;
   const contentPass = password.value;
 
-  const loginAfterReg = await signIn.signIn(contentEmail, contentPass);
-  const createUser = await signup.createUser(contentLogin, contentEmail, contentPass).then((response) => {
-    console.log(response);
-    if(response.status === 200) {
-      localStorage.setItem('user', JSON.stringify(login));
-      redirect('./index.html');
-    } else if(response.status === 417) {
-      incorrectReg.style.display = 'block';
-      incorrectReg.innerText = 'email is already registered';
-    } else {
-      incorrectReg.style.display = 'block';
-    }
-  });
+  
+  const createUser = await signup.createUser(contentLogin, contentEmail, contentPass)
+  if(createUser.status === 200) {
+    const loginAfterReg = await signIn.signIn(contentEmail, contentPass);
+    localStorage.setItem('user', JSON.stringify(await loginAfterReg.json()));
+    redirect('./index.html');
+  } else if(createUser.status === 417) {
+    incorrectReg.style.display = 'block';
+    incorrectReg.innerText = 'email is already registered';
+  } else {
+    incorrectReg.style.display = 'block';
+  }
 });
+
 
 // LoginIn
 const formSignIn = document.querySelector('.form-wrapper_signin') as HTMLInputElement;
@@ -87,22 +87,21 @@ formSignIn.addEventListener('submit', async (e) => {
   // pass 123456789
 
 
-  const login = await signIn.signIn(textSignInEmail, textSignInPass).then((response) => {
-    if(response.status === 200) {
-      localStorage.setItem('user', JSON.stringify(response));
-      redirect('./index.html');
-    } else if(response.status === 403) {
-        incorrect.style.display = 'block';
-        emailSignIn.style.backgroundColor = 'pink';
-        passwordSignIn.style.backgroundColor = 'pink';
-      } else {
-        incorrect.style.display = 'block';
-        incorrect.innerText = 'you\'re not registred';
-        emailSignIn.style.backgroundColor = 'pink';
-        passwordSignIn.style.backgroundColor = 'pink';
-      }
-  });
-
+  const login = await signIn.signIn(textSignInEmail, textSignInPass);
+  if(login.status === 200) {
+    localStorage.setItem('user', JSON.stringify(await login.json()));
+    redirect('./index.html');
+  } else if(login.status === 403) {
+      incorrect.style.display = 'block';
+      emailSignIn.style.backgroundColor = 'pink';
+      passwordSignIn.style.backgroundColor = 'pink';
+    } else {
+      incorrect.style.display = 'block';
+      incorrect.innerText = 'you\'re not registred';
+      emailSignIn.style.backgroundColor = 'pink';
+      passwordSignIn.style.backgroundColor = 'pink';
+    }
+    
 });
 
 // test user

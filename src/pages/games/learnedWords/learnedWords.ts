@@ -6,7 +6,8 @@ class LearnedWords{
     this.learnedWords=new LearnedWordsGame();
  }
  async addWord(word){  
-    if(localStorage.token){
+    if(localStorage.user){
+      const user = JSON.parse(localStorage.getItem('user'))
       if(localStorage.rightWordsForUser!==undefined){
         let arr=JSON.parse(localStorage.rightWordsForUser)
         const wordId=word.id;
@@ -27,7 +28,7 @@ class LearnedWords{
                 return true
             })
             localStorage.setItem('rightWordsForUser', JSON.stringify(arr));
-            await this.learnedWords.UserWordCreate(localStorage.token, localStorage.userId, wordId, 'learned', word)
+            await this.learnedWords.UserWordCreate(user.token, user.userId, wordId, 'learned', word)
         }else{
             arr.push(word)
             localStorage.setItem('rightWordsForUser', JSON.stringify(arr));
@@ -41,8 +42,9 @@ class LearnedWords{
     }
  }
  deleteWord(word){
-    if(localStorage.token){
-        this.learnedWords.UserWordDelete(localStorage.token, localStorage.userId, word.id)
+    if(localStorage.user){
+        const user = JSON.parse(localStorage.getItem('user'))
+        this.learnedWords.UserWordDelete(user.token, user.userId, word.id)
     }
  }
 }
