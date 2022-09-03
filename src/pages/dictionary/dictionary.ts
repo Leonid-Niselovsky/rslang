@@ -2,10 +2,10 @@ import './main.scss'
 import ApiWords from "../../api/apiWords"
 import { Words } from './words'
 import { Pagination } from './pagination'
-import ApiUsers from '../../api/apiUsers'
-import ApiUsersWords from '../../api/apiUsersWords'
-import ApiUsersSettings from '../../api/apiUsersSettings'
-import ApiSignIn from '../../api/apiSignIn'
+// import ApiUsers from '../../api/apiUsers'
+// import ApiUsersWords from '../../api/apiUsersWords'
+// import ApiUsersSettings from '../../api/apiUsersSettings'
+// import ApiSignIn from '../../api/apiSignIn'
 
 
 
@@ -18,6 +18,7 @@ export enum accordance {
   C1 = '4',
   C2 = '5',
 }
+
 
 export class DifficultyLevels {
 
@@ -35,31 +36,50 @@ export class DifficultyLevels {
     this.pagination = new Pagination()
     const levelsList = document.querySelectorAll('.level')
     this.levels = levelsList 
-    this.hardWords = document.querySelector('.hard-words')
-    if(localStorage.level === 'hard-words') this.words.hardWordsRender()
+    this.hardWords = document.querySelector('.level-hard-words')
+    if(localStorage.level === 'hard-words') {
+      this.words.hardWordsRender()
+    }
     else this.words.render(localStorage.level, localStorage.page)
   }
 
   onClick(){
     this.levels.forEach(el => {
       el.addEventListener('click', () => {
+        this.highlightLevel(el)
         const level = el.classList[1].split('level-')[1]
         this.words.currentLevel = level
-        localStorage.level = accordance[level]
+        localStorage.level = level
         localStorage.page = '0'
         this.words.currentPage = '1'
         this.pagination.reset()
-        this.words.render(accordance[level], '0')
+        this.words.render(level, '0')
       })
     })
 
     this.hardWords.addEventListener('click', () => {
+      this.highlightHardWords()
       localStorage.level = 'hard-words'
       this.words.hardWordsRender()
     })
   }
 
+  highlightLevel(level: Element){
+    const allButtons = document.querySelectorAll('.level')
+    this.hardWords.classList.remove('active')
+    allButtons.forEach((a) => {
+      a.classList.remove('active')
+    })
+    level.classList.add('active')
+  }
   
+  highlightHardWords(){
+    const allButtons = document.querySelectorAll('.level')
+    allButtons.forEach((a) => {
+      a.classList.remove('active')
+    })
+    this.hardWords.classList.add('active')
+  }
 }
 
 
@@ -68,7 +88,6 @@ export class DifficultyLevels {
 // console.log(localStorage)
 const levels = new DifficultyLevels()
 levels.onClick()
-console.log(JSON.parse(localStorage.wordsForGames))
 // const apiSignIn = new ApiSignIn()
 // const apiUsersWords = new ApiUsersWords()
 // const apiUsers = new ApiUsers()
@@ -83,4 +102,5 @@ console.log(JSON.parse(localStorage.wordsForGames))
 // }
 
 // createUser("pasha3", "pasha3@gmail.com", 'pasha11234')
+
 
