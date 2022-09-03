@@ -9,6 +9,7 @@ import ApiSignIn from '../../api/apiSignIn'
 import {SignIn} from '../../api/interface'
 import {gameLink} from '../dictionary/gameLink'
 import {audioPlayback} from '../dictionary/audioPlayback'
+import StartGame from '../games/startGameTextBook/startGame'
 
 let instance
 
@@ -19,6 +20,7 @@ export class Words {
   private _currentPage: string
   private apiSignIn: ApiSignIn
   private apiUsersWords: ApiUsersWords
+  startGame: StartGame
 
   get currentLevel(): string{
     return this._currentLevel
@@ -41,6 +43,7 @@ export class Words {
     this.apiWords = new ApiWords()
     this.apiSignIn = new ApiSignIn()
     this.apiUsersWords = new ApiUsersWords()
+    this.startGame = new StartGame()
     return instance
   }
 
@@ -314,7 +317,7 @@ export class Words {
   }
 
   gameLinkHandler(gameLink: HTMLButtonElement, user: SignIn){
-    gameLink.addEventListener('click', async () => {
+    gameLink.addEventListener('click', async (e) => {
       const userWords = (await this.apiUsersWords.getAllUserWords(user.token, user.userId)).filter(a => a.difficulty === 'learned')
       const learnedWordsArray = userWords.map(a => a.optional) as IWord[]
       const wordsArray: IWord[] = []
@@ -325,6 +328,7 @@ export class Words {
         wordsArray.push(...passedWords)
       }
       localStorage.wordsForGames = JSON.stringify(wordsArray)
+      this.startGame.start(e.target)
     })
   }
 
