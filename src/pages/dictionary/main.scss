@@ -441,6 +441,15 @@ main{
   gap: 30px;
   padding-top: 40px;
 
+  .game-link{
+    text-decoration: none;
+    font-family: 'Raleway';
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    color: #02121C;
+  }
+
   .audio-call{
     cursor: pointer;
     display: flex;
