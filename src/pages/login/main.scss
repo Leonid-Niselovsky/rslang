@@ -1,0 +1,193 @@
+@import '../../colors/colors';
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Roboto"),
+       url("../../assets/fonts/Roboto-Thin.ttf") format("ttf"),
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Roboto";
+  background-color: $text-color2;
+  transition: 0.5s;
+}
+
+.header {
+  width: 100%;
+  padding-top: 35px;
+  padding-left: 200px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.link_logo {
+  font-size: 2.2rem;
+  font-family: "Gilroy-Bold";
+  letter-spacing: 2px;
+  border-bottom: 1px solid $gold-color;
+  text-shadow: 0 0 1px #000000;
+}
+
+.link_nav {
+  text-decoration: none;
+  color: $text-color;
+  font-weight: 800;
+  transition: 0.2s ease-in-out;
+}
+
+.link_nav:hover {
+  color: #ffffff;
+}
+
+.link_nav:active {
+  color: $gold-color;
+  transform: scale(1.1);
+}
+
+body.active {
+  background-color: #6a6a6a;
+}
+
+.container {
+  position: relative;
+  width: 800px;
+  height: 500px;
+  padding: 30px 0;
+}
+
+.block {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  background-color: rgba(207, 98, 84, 0.6);
+  box-shadow: 0 10px 80px rgba(0, 0, 0, 0.3);
+
+}
+
+.block__item {
+  width: 50%;
+}
+
+.block-item {
+  text-align: center;
+}
+
+.block-item__head {
+  font-size: 2rem;
+  color: $text-color;
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+  line-height: 50px;
+}
+
+.block-item__btn {
+  font-size: 1rem;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  color: $text-color2;
+  font-weight: 500;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #ffffff;
+  height: 100%;
+  width: 50%;
+  box-shadow: 0 10px 80px rgba(0, 0, 0, 0.3);
+  transition: 0.5s ease-in-out;
+  overflow: hidden;
+}
+
+.form.active {
+  left: 50%;
+}
+
+.form-wrapper {
+  position: absolute;
+  width: 100%;
+  padding: 50px;
+  font-size: 1rem;
+  transition: 0.5s;
+}
+
+.form-wrapper__head {
+  font-size: 1.5rem;
+  color: $text-color2;
+}
+
+.form-wrapper__input {
+  width: 100%;
+  padding: 20px;
+  border: solid 1px $text-color2;
+  font-size: inherit;
+}
+
+.form-wrapper__btn {
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  background-color: rgb(213, 149, 139);
+  color: $text-color;
+  padding: 10px 50px;
+}
+
+.form-wrapper__btn_signup {
+  background-color: $background-color;
+}
+
+.form-wrapper_signin {
+  left: 0;
+  transition-delay: 0.1s;
+}
+
+.form-wrapper_signup {
+  left: 100%;
+  transition-delay: 0s;
+}
+
+.form.active .form-wrapper_signin {
+  left: -100%;
+  transition-delay: 0s;
+}
+
+.form.active .form-wrapper_signup {
+  left: 0;
+  transition-delay: 0.3s;
+}
+
+.error-registr {
+  display: none;
+  color: red;
+}
+
+.error-registration {
+  display: none;
+  color: red;
+}
+
+.margin-form {
+  margin: 30px 0;
+}
+
